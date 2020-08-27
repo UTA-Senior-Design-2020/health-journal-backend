@@ -8,4 +8,10 @@ router.get("/", function (req, res) {
   res.json(tasks);
 });
 
+router.get("/:taskID", (req, res) => {
+  // req.params.taskID
+  res.status(200);
+  res.json(tasks[0]);
+});
+
 module.exports = router;
