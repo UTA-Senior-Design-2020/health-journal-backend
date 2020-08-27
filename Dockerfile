@@ -7,5 +7,5 @@ RUN npm install -g nodemon
 RUN npm install
 RUN echo yo
 COPY --chown=node:node . .
-EXPOSE 4000
+EXPOSE 3000
 CMD ["npm", "run", "start"]
