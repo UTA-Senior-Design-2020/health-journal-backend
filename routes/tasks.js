@@ -9,9 +9,9 @@ router.get("/", function (req, res) {
 });
 
 router.get("/:taskID", (req, res) => {
-  // req.params.taskID
+  let taskID = req.params.taskID; // CHANGE THIS SOON...
   res.status(200);
-  res.json(tasks[0]);
+  res.json(tasks[taskID]);
 });
 
 module.exports = router;
