@@ -6,6 +6,7 @@ import tasks from "../stubs/tasks";
 // Note: Look into pools? https://www.npmjs.com/package/mysql#pooling-connections
 
 const DB = {
+  /** ----- Tasks ----- */
   retrieveTask: function (taskID) {
     const task = tasks[taskID];
     if (patient === undefined)
@@ -13,6 +14,7 @@ const DB = {
 
     return task;
   },
+
   retrieveTask: function (taskID) {
     const task = tasks.find((task) => task.id === taskID);
     if (task === undefined)
@@ -20,6 +22,7 @@ const DB = {
 
     return task;
   },
+
   /** ----- Patients ----- */
   retrievePatient: function (patientID) {
     const patient = patients.find((patient) => patient.id === patientID);
@@ -28,6 +31,7 @@ const DB = {
 
     return patient;
   },
+
   /** ----- Doctors ----- */
   retrievePatientsByDoctor: function (doctorID) {},
 
@@ -35,6 +39,7 @@ const DB = {
   retrieveAllPatients: function () {
     return patients;
   },
+
   retrieveAllTasks: function () {
     return tasks;
   },
