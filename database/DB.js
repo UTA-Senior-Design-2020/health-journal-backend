@@ -22,7 +22,7 @@ const DB = {
   /** ----- Tasks ----- */
   retrieveTask: function (taskID) {
     const task = tasks[taskID];
-    if (patient === undefined)
+    if (task === undefined)
       throw Error(`Task '${taskID}' does not exist in the Database`);
 
     return task;
