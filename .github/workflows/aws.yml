@@ -81,7 +81,7 @@ jobs:
       id: task-def
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
-        task-definition: health-journal-backend-task
+        task-definition: task-def.json
         container-name: health-journal-backend-container
         image: ${{ steps.build-image.outputs.image }}
 
