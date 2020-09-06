@@ -30,7 +30,7 @@ if (app.get("env") === "production") {
 }
 
 app.use("/", indexRouter);
-app.use("/patients", patientsRouter);
+app.use("/api/patients", patientsRouter);
 app.use("/api/tasks", tasksRouter);
 
 module.exports = app;
