@@ -3,6 +3,7 @@
  */
 import patients from "../stubs/patients";
 import tasks from "../stubs/tasks";
+import doctors from "../stubs/doctors";
 // Note: Look into pools? https://www.npmjs.com/package/mysql#pooling-connections
 
 const DB = {
@@ -33,11 +34,21 @@ const DB = {
   },
 
   /** ----- Doctors ----- */
-  retrievePatientsByDoctor: function (doctorID) {},
+  retrieveDoctor: function (doctorID) {
+    const doctor = doctors.find((doctor) => doctor.id === doctorID);
+    if (doctor === undefined)
+      throw Error(`Doctor '${doctorID}' does not exist in the Database`);
+
+    return doctor;
+  },
 
   /** DEVELOPER MODE ONLY */
   retrieveAllPatients: function () {
     return patients;
+  },
+
+  retrieveAllDoctors: function () {
+    return doctors;
   },
 
   retrieveAllTasks: function () {
