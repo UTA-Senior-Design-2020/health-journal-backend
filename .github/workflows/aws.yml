@@ -89,6 +89,6 @@ jobs:
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: backend-container-serviceUpdate
-        cluster: backend-clusterUpdate
+        service: backend-container-service
+        cluster: backend-cluster
         wait-for-service-stability: true
