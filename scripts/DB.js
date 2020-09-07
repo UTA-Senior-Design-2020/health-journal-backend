@@ -4,56 +4,84 @@
 import patients from "../stubs/patients";
 import tasks from "../stubs/tasks";
 import doctors from "../stubs/doctors";
-// Note: Look into pools? https://www.npmjs.com/package/mysql#pooling-connections
+require('dotenv').config();
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB
+})
+
+connection.connect(function(err) {
+  if (err) throw err;
+  console.log("Connected!");
+});
 
 const DB = {
   /** ----- Tasks ----- */
   retrieveTask: function (taskID) {
-    const task = tasks[taskID];
-    if (patient === undefined)
-      throw Error(`Task '${taskID}' does not exist in the Database`);
-
-    return task;
-  },
-
-  retrieveTask: function (taskID) {
-    const task = tasks.find((task) => task.id === taskID);
-    if (task === undefined)
-      throw Error(`Task '${taskID}' does not exist in the Database`);
-
-    return task;
+    // need to pass in taskID when aws gets updated; hardcoded [1] for now
+    connection.query('SELECT * FROM Tasks WHERE taskID = ?', [1], function (err, result) {
+      if (err) throw Error(`Task '${taskID}' does not exist in the Database`);;
+      console.log(result);
+    });
   },
 
   /** ----- Patients ----- */
   retrievePatient: function (patientID) {
-    const patient = patients.find((patient) => patient.id === patientID);
-    if (patient === undefined)
-      throw Error(`Patient '${patientID}' does not exist in the Database`);
-
-    return patient;
+    // need to pass in patientID when aws gets updated; hardcoded [1] for now
+    connection.query('SELECT * FROM Patients WHERE patientID = ?', [1], function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
   },
 
   /** ----- Doctors ----- */
   retrieveDoctor: function (doctorID) {
-    const doctor = doctors.find((doctor) => doctor.id === doctorID);
-    if (doctor === undefined)
-      throw Error(`Doctor '${doctorID}' does not exist in the Database`);
-
-    return doctor;
+    // need to pass in doctorID when aws gets updated; hardcoded [1] for now
+    connection.query('SELECT * FROM Doctors WHERE doctorID = ?', [1], function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
   },
 
   /** DEVELOPER MODE ONLY */
   retrieveAllPatients: function () {
-    return patients;
+    const sql = 'SELECT * FROM Patients;'
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
   },
 
   retrieveAllDoctors: function () {
-    return doctors;
+    const sql = 'SELECT * FROM Doctors;'
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
   },
 
   retrieveAllTasks: function () {
-    return tasks;
+    const sql = 'SELECT * FROM Tasks;'
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      console.log(result);
+    });
   },
 };
+
+// all working hardcoded, need aws server updated to test api
+//DB.retrieveAllPatients();
+//DB.retrieveAllDoctors();
+//DB.retrieveAllTasks();
+
+//DB.retrieveDoctor();
+//DB.retrievePatient();
+//DB.retrieveTask();
+
+connection.end();
 
 export default DB;
