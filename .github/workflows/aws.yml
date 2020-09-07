@@ -82,13 +82,13 @@ jobs:
       uses: aws-actions/amazon-ecs-render-task-definition@v1
       with:
         task-definition: task-def.json
-        container-name: health-journal-backend-container
+        container-name: backend-container
         image: ${{ steps.build-image.outputs.image }}
 
     - name: Deploy Amazon ECS task definition
       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
       with:
         task-definition: ${{ steps.task-def.outputs.task-definition }}
-        service: health-journal-backend-service
-        cluster: health-journal-backend-cluster
+        service: backend-container-serviceUpdate
+        cluster: backend-clusterUpdate
         wait-for-service-stability: true
