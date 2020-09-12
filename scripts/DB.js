@@ -21,6 +21,7 @@ const DB = {
   /** ----- Tasks ----- */
   retrieveTask: function (taskID, callback) {
     const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
+
     DBConnection.query(sql, (err, result) => {
       if (err) throw err;
       console.log(`DB.retrieveTask(${sql}):`, result);
@@ -72,17 +73,12 @@ const DB = {
 
   retrieveAllTasks: function (callback) {
     const sql = "SELECT * FROM Tasks;";
+
     DBConnection.query(sql, (err, result) => {
       if (err) throw err;
       console.log("DB.retrieveAllTasks:", result);
       callback(result);
     });
-
-    // connection.query(sql, function (err, result) {
-    //   if (err) throw err;
-    //   console.log("DB.retrieveAllTasks:", result);
-    //   connection.end();
-    // });
   },
 };
 
