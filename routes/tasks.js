@@ -5,10 +5,10 @@ import DB from "../scripts/DB";
 
 /* GET users listing. */
 router.get("/", function (req, res) {
-  const tasks = DB.retrieveAllTasks();
-
-  res.status(200);
-  res.json(tasks);
+  DB.retrieveAllTasks((results) => {
+    res.status(200);
+    res.json(results);
+  });
 });
 
 router.get("/:taskID", (req, res) => {
