@@ -5,14 +5,10 @@ import DB from "../scripts/DB";
 
 /* GET users listing. */
 router.get("/", function (req, res) {
-  try {
-    DB.retrieveAllTasks((results) => {
-      res.status(200);
-      res.json(results);
-    });
-  } catch (err) {
-    res.status(400);
-  }
+  DB.retrieveAllTasks(function(data) {
+    res.header("Content-Type",'application/json');
+    res.send(JSON.stringify(data, null, 4));
+  });
 });
 
 router.get("/:taskID", (req, res) => {

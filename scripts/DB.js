@@ -64,22 +64,21 @@ const DB = {
   },
 
   retrieveAllDoctors: function () {
-    const sql = "SELECT * FROM Doctors;";
+    /*const sql = 'SELECT * FROM Doctors;'
     connection.query(sql, function (err, result) {
       if (err) throw err;
       console.log(result);
-    });
+    });*/
+    console.log('hello');
   },
 
   retrieveAllTasks: function (callback) {
-    const sql = "SELECT * FROM Tasks;";
-
-    DBConnection.query(sql, (err, result) => {
+    const sql = 'SELECT * FROM Tasks;'
+    connection.query(sql, function (err, result) {
       if (err) throw err;
-      console.log("DB.retrieveAllTasks:", result);
       callback(result);
     });
-  },
+  }
 };
 
 // all working hardcoded, need aws server updated to test api
@@ -91,6 +90,6 @@ const DB = {
 //DB.retrievePatient();
 //DB.retrieveTask();
 
-connection.end();
+//connection.end();
 
 export default DB;
