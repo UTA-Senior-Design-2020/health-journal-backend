@@ -4,10 +4,10 @@ import DB from "../scripts/DB";
 
 /** GET All Doctors*/
 router.get("/", function (req, res) {
-    console.log(DB);
-    const doctors = DB.retrieveAllDoctors();
-    res.status(200);
-    res.json(doctors);
+  DB.retrieveAllDoctors(function(data) {
+    res.header("Content-Type",'application/json');
+    res.send(JSON.stringify(data, null, 4));
+    });
   });
   
   /**  GET doctor by ID */
@@ -15,14 +15,12 @@ router.get("/", function (req, res) {
     let doctorID = req.params.doctorID;
     try {
       validateInputID(doctorID);
-      const doctor = DB.retrieveDoctor(doctorID);
-  
-      res.status(200);
-      res.json(doctor);
-    } catch (error) {
-      console.error(error);
+      DB.retrieveDoctor(doctorID, (result) => {
+        res.header("Content-Type",'application/json');
+        res.send(JSON.stringify(result, null, 4));
+      });
+    } catch (err) {
       res.status(400);
-      res.send(error.message);
     }
   });
   

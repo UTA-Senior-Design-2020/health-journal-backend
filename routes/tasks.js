@@ -16,8 +16,8 @@ router.get("/:taskID", (req, res) => {
     const taskID = req.params.taskID;
     validateInputID(taskID);
     DB.retrieveTask(taskID, (result) => {
-      res.status(200);
-      res.json(result);
+      res.header("Content-Type",'application/json');
+      res.send(JSON.stringify(result, null, 4));
     });
   } catch (err) {
     res.status(400);

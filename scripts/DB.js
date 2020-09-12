@@ -20,56 +20,70 @@ var connection = mysql.createConnection({
 const DB = {
   /** ----- Tasks ----- */
   retrieveTask: function (taskID, callback) {
+    // need to error handle now
     const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
 
     DBConnection.query(sql, (err, result) => {
       if (err) throw err;
-      console.log(`DB.retrieveTask(${sql}):`, result);
-      callback(result);
+      if (result.length > 0){
+        console.log(`DB.retrieveTask(${sql}):`, result);
+        callback(result);
+      }
+      else {
+        callback('Task does not exist in DB');
+      }
     });
   },
 
   /** ----- Patients ----- */
-  retrievePatient: function (patientID) {
-    // need to pass in patientID when aws gets updated; hardcoded [1] for now
-    connection.query(
-      "SELECT * FROM Patients WHERE patientID = ?",
-      [1],
-      function (err, result) {
-        if (err) throw err;
-        console.log(result);
+  retrievePatient: function (patientID, callback) {
+    // need to error handle now
+    const sql = `SELECT * FROM Patients WHERE PatientId = ${patientID}`;
+
+    DBConnection.query(sql, (err, result) => {
+      if (err) throw err;
+      if (result.length > 0){
+        console.log(`DB.retrievePatient(${sql}):`, result);
+        callback(result);
       }
-    );
+      else {
+        callback('Patient does not exist in DB');
+      }
+    });
   },
 
   /** ----- Doctors ----- */
-  retrieveDoctor: function (doctorID) {
-    // need to pass in doctorID when aws gets updated; hardcoded [1] for now
-    connection.query("SELECT * FROM Doctors WHERE doctorID = ?", [1], function (
-      err,
-      result
-    ) {
+  retrieveDoctor: function (doctorID, callback) {
+    // need to error handle now
+    const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
+    
+    DBConnection.query(sql, (err, result) => {
       if (err) throw err;
-      console.log(result);
+      if (result.length > 0){
+        console.log(`DB.retrieveDoctor(${sql}):`, result);
+        callback(result);
+      }
+      else {
+        callback('Doctor does not exist in DB');
+      }
     });
   },
 
   /** DEVELOPER MODE ONLY */
-  retrieveAllPatients: function () {
-    const sql = "SELECT * FROM Patients;";
+  retrieveAllPatients: function (callback) {
+    const sql = 'SELECT * FROM Patients;'
     connection.query(sql, function (err, result) {
       if (err) throw err;
-      console.log(result);
+      callback(result);
     });
   },
 
-  retrieveAllDoctors: function () {
-    /*const sql = 'SELECT * FROM Doctors;'
+  retrieveAllDoctors: function (callback) {
+    const sql = 'SELECT * FROM Doctors;'
     connection.query(sql, function (err, result) {
       if (err) throw err;
-      console.log(result);
-    });*/
-    console.log('hello');
+      callback(result);
+    });
   },
 
   retrieveAllTasks: function (callback) {
