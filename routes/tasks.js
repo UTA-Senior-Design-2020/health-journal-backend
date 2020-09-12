@@ -12,16 +12,15 @@ router.get("/", function (req, res) {
 });
 
 router.get("/:taskID", (req, res) => {
-  let taskID = req.params.taskID; // CHANGE THIS SOON...
   try {
-    const task = DB.retrieveTask(taskID);
-
-    res.status(200);
-    res.json(task);
-  } catch (error) {
-    console.error(error);
+    const taskID = req.params.taskID;
+    validateInputID(taskID);
+    DB.retrieveTask(taskID, (result) => {
+      res.status(200);
+      res.json(result);
+    });
+  } catch (err) {
     res.status(400);
-    res.send(error.message);
   }
 });
 

@@ -19,14 +19,12 @@ var connection = mysql.createConnection({
 
 const DB = {
   /** ----- Tasks ----- */
-  retrieveTask: function (taskID) {
-    // need to pass in taskID when aws gets updated; hardcoded [1] for now
-    connection.query("SELECT * FROM Tasks WHERE taskID = ?", [1], function (
-      err,
-      result
-    ) {
-      if (err) throw Error(`Task '${taskID}' does not exist in the Database`);
-      console.log(result);
+  retrieveTask: function (taskID, callback) {
+    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
+    DBConnection.query(sql, (err, result) => {
+      if (err) throw err;
+      console.log(`DB.retrieveTask(${sql}):`, result);
+      callback(result);
     });
   },
 
