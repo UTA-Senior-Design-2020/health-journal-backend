@@ -12,13 +12,20 @@ router.get("/", function (req, res) {
   
   /**  GET doctor by ID */
   router.get("/:doctorID", function (req, res) {
-    let doctorID = req.params.doctorID;
     try {
-      validateInputID(doctorID);
-      DB.retrieveDoctor(doctorID, (result) => {
+      const doctorID = req.params.doctorID;
+      var value = validateInputID(doctorID);
+      console.log(value);
+      if (value == true) {
+        DB.retrieveDoctor(doctorID, (result) => {
+          res.header("Content-Type",'application/json');
+          res.send(JSON.stringify(result, null, 4));
+        });
+      }
+      else {
         res.header("Content-Type",'application/json');
-        res.send(JSON.stringify(result, null, 4));
-      });
+        res.send(JSON.stringify('DoctorID is invalid', null, 4));
+      }
     } catch (err) {
       res.status(400);
     }
@@ -26,8 +33,11 @@ router.get("/", function (req, res) {
   
   /** ----------Helper Functions---------- */
   function validateInputID(doctorID) {
-    if (doctorID.length > 36)
-      throw Error(`Doctor ID '${doctorID}' is too long`);
+    if (isNaN(doctorID) || doctorID.length > 36){
+      return false;
+    }
+    else 
+      return true;
   }
   
   module.exports = router;

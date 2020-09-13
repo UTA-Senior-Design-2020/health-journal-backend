@@ -14,11 +14,18 @@ router.get("/", function (req, res) {
 router.get("/:taskID", (req, res) => {
   try {
     const taskID = req.params.taskID;
-    validateInputID(taskID);
-    DB.retrieveTask(taskID, (result) => {
+    var value = validateInputID(taskID);
+    console.log(value);
+    if (value == true) {
+      DB.retrieveTask(taskID, (result) => {
+        res.header("Content-Type",'application/json');
+        res.send(JSON.stringify(result, null, 4));
+      });
+    }
+    else {
       res.header("Content-Type",'application/json');
-      res.send(JSON.stringify(result, null, 4));
-    });
+      res.send(JSON.stringify('TaskID is invalid', null, 4));
+    }
   } catch (err) {
     res.status(400);
   }
@@ -26,8 +33,11 @@ router.get("/:taskID", (req, res) => {
 
 /** ----------Helper Functions---------- */
 function validateInputID(taskID) {
-  if (taskID.length < 0 || taskID.length > 36)
-    throw Error(`Patient ID '${taskID}' is too long`);
+  if (isNaN(taskID) || taskID.length < 0 || taskID.length > 36){
+    return false;
+  }
+  else 
+    return true;
 }
 
 module.exports = router;

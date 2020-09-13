@@ -30,7 +30,7 @@ const DB = {
         callback(result);
       }
       else {
-        callback('Task does not exist in DB');
+        callback('TaskID does not exist in DB');
       }
     });
   },
@@ -47,7 +47,7 @@ const DB = {
         callback(result);
       }
       else {
-        callback('Patient does not exist in DB');
+        callback('PatientID does not exist in DB');
       }
     });
   },
@@ -64,7 +64,7 @@ const DB = {
         callback(result);
       }
       else {
-        callback('Doctor does not exist in DB');
+        callback('DoctorID does not exist in DB');
       }
     });
   },
