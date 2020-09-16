@@ -1,48 +1,109 @@
 /**
  * Connections to the Database are made here
  */
-import patients from "../stubs/patients";
-import tasks from "../stubs/tasks";
-// Note: Look into pools? https://www.npmjs.com/package/mysql#pooling-connections
+require("dotenv").config();
+var mysql = require("mysql");
+const DBConnection = require("./DBConnection");
+
+var connection = mysql.createConnection({
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB,
+});
+
+// connection.connect(function (err) {
+//   if (err) throw err;
+//   console.log("Connected!");
+// });
 
 const DB = {
   /** ----- Tasks ----- */
-  retrieveTask: function (taskID) {
-    const task = tasks[taskID];
-    if (patient === undefined)
-      throw Error(`Task '${taskID}' does not exist in the Database`);
+  retrieveTask: function (taskID, callback) {
+    // need to error handle now
+    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
 
-    return task;
-  },
-
-  retrieveTask: function (taskID) {
-    const task = tasks.find((task) => task.id === taskID);
-    if (task === undefined)
-      throw Error(`Task '${taskID}' does not exist in the Database`);
-
-    return task;
+    DBConnection.query(sql, (err, result) => {
+      if (err) throw err;
+      if (result.length > 0){
+        console.log(`DB.retrieveTask(${sql}):`, result);
+        callback(result);
+      }
+      else {
+        callback('TaskID does not exist in DB');
+      }
+    });
   },
 
   /** ----- Patients ----- */
-  retrievePatient: function (patientID) {
-    const patient = patients.find((patient) => patient.id === patientID);
-    if (patient === undefined)
-      throw Error(`Patient '${patientID}' does not exist in the Database`);
+  retrievePatient: function (patientID, callback) {
+    // need to error handle now
+    const sql = `SELECT * FROM Patients WHERE PatientId = ${patientID}`;
 
-    return patient;
+    DBConnection.query(sql, (err, result) => {
+      if (err) throw err;
+      if (result.length > 0){
+        console.log(`DB.retrievePatient(${sql}):`, result);
+        callback(result);
+      }
+      else {
+        callback('PatientID does not exist in DB');
+      }
+    });
   },
 
   /** ----- Doctors ----- */
-  retrievePatientsByDoctor: function (doctorID) {},
+  retrieveDoctor: function (doctorID, callback) {
+    // need to error handle now
+    const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
+    
+    DBConnection.query(sql, (err, result) => {
+      if (err) throw err;
+      if (result.length > 0){
+        console.log(`DB.retrieveDoctor(${sql}):`, result);
+        callback(result);
+      }
+      else {
+        callback('DoctorID does not exist in DB');
+      }
+    });
+  },
 
   /** DEVELOPER MODE ONLY */
-  retrieveAllPatients: function () {
-    return patients;
+  retrieveAllPatients: function (callback) {
+    const sql = 'SELECT * FROM Patients;'
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      callback(result);
+    });
   },
 
-  retrieveAllTasks: function () {
-    return tasks;
+  retrieveAllDoctors: function (callback) {
+    const sql = 'SELECT * FROM Doctors;'
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      callback(result);
+    });
   },
+
+  retrieveAllTasks: function (callback) {
+    const sql = 'SELECT * FROM Tasks;'
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      callback(result);
+    });
+  }
 };
+
+// all working hardcoded, need aws server updated to test api
+//DB.retrieveAllPatients();
+//DB.retrieveAllDoctors();
+//DB.retrieveAllTasks();
+
+//DB.retrieveDoctor();
+//DB.retrievePatient();
+//DB.retrieveTask();
+
+//connection.end();
 
 export default DB;

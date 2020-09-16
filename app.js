@@ -6,6 +6,7 @@ var logger = require("morgan");
 var indexRouter = require("./routes/index");
 var patientsRouter = require("./routes/patients");
 let tasksRouter = require("./routes/tasks");
+var doctorsRouter = require("./routes/doctors");
 
 var app = express();
 
@@ -18,5 +19,6 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/", indexRouter);
 app.use("/patients", patientsRouter);
 app.use("/tasks", tasksRouter);
+app.use("/doctors", doctorsRouter);
 
 module.exports = app;

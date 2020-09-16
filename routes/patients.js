@@ -4,32 +4,41 @@ import DB from "../scripts/DB";
 
 /** GET All Patients*/
 router.get("/", function (req, res) {
-  console.log(DB);
-  const patients = DB.retrieveAllPatients();
-  res.status(200);
-  res.json(patients);
-});
+  DB.retrieveAllPatients(function(data) {
+    res.header("Content-Type",'application/json');
+    res.send(JSON.stringify(data, null, 4));
+    });
+  });
 
 /**  GET patient by ID */
 router.get("/:patientID", function (req, res) {
-  let patientID = req.params.patientID; // CHANGE THIS SOON...
   try {
-    validateInputID(patientID);
-    const patient = DB.retrievePatient(patientID);
-
-    res.status(200);
-    res.json(patient);
-  } catch (error) {
-    console.error(error);
+    const patientID = req.params.patientID;
+    var value = validateInputID(patientID);
+    console.log(value);
+    if (value == true) {
+      DB.retrievePatient(patientID, (result) => {
+        res.header("Content-Type",'application/json');
+        res.send(JSON.stringify(result, null, 4));
+      });
+    }
+    else {
+      res.header("Content-Type",'application/json');
+      res.send(JSON.stringify('PatientID is invalid', null, 4));
+    }
+  } catch (err) {
     res.status(400);
-    res.send(error.message);
   }
+
 });
 
 /** ----------Helper Functions---------- */
 function validateInputID(patientID) {
-  if (patientID.length > 36)
-    throw Error(`Patient ID '${patientID}' is too long`);
+  if (isNaN(patientID) || patientID.length > 36){
+    return false;
+  }
+  else 
+    return true;
 }
 
 module.exports = router;

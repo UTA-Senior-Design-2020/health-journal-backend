@@ -5,30 +5,39 @@ import DB from "../scripts/DB";
 
 /* GET users listing. */
 router.get("/", function (req, res) {
-  const tasks = DB.retrieveAllTasks();
-
-  res.status(200);
-  res.json(tasks);
+  DB.retrieveAllTasks(function(data) {
+    res.header("Content-Type",'application/json');
+    res.send(JSON.stringify(data, null, 4));
+  });
 });
 
 router.get("/:taskID", (req, res) => {
-  let taskID = req.params.taskID; // CHANGE THIS SOON...
   try {
-    const task = DB.retrieveTask(taskID);
-
-    res.status(200);
-    res.json(task);
-  } catch (error) {
-    console.error(error);
+    const taskID = req.params.taskID;
+    var value = validateInputID(taskID);
+    console.log(value);
+    if (value == true) {
+      DB.retrieveTask(taskID, (result) => {
+        res.header("Content-Type",'application/json');
+        res.send(JSON.stringify(result, null, 4));
+      });
+    }
+    else {
+      res.header("Content-Type",'application/json');
+      res.send(JSON.stringify('TaskID is invalid', null, 4));
+    }
+  } catch (err) {
     res.status(400);
-    res.send(error.message);
   }
 });
 
 /** ----------Helper Functions---------- */
 function validateInputID(taskID) {
-  if (taskID.length < 0 || taskID.length > 36)
-    throw Error(`Patient ID '${taskID}' is too long`);
+  if (isNaN(taskID) || taskID.length < 0 || taskID.length > 36){
+    return false;
+  }
+  else 
+    return true;
 }
 
 module.exports = router;
