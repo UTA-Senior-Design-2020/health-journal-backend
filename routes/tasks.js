@@ -14,6 +14,28 @@ router.get("/", function (req, res) {
   }
 });
 
+router.post("/", async (req, res) => {
+  const { task } = req.body;
+
+  try {
+    const createdTaskId = await DB.addTask(task);
+    res.status(201).json({ data: { taskId: createdTaskId } });
+  } catch (error) {
+    res.status(500).send({ error: error });
+  }
+});
+
+router.put("/", async (req, res) => {
+  const { task } = req.body;
+
+  try {
+    await DB.updateTask(task);
+    res.status(200).json({ data: { TaskId: task.TaskId } });
+  } catch (error) {
+    res.status(500).send({ error: error });
+  }
+});
+
 router.get("/:taskID", (req, res) => {
   try {
     const taskID = req.params.taskID;
@@ -28,18 +50,6 @@ router.get("/:taskID", (req, res) => {
     }
   } catch (err) {
     res.status(400).send({ error: "Bad Request" });
-  }
-});
-
-router.post("/", async (req, res) => {
-  const { task } = req.body;
-
-  try {
-    const createdTaskId = await DB.addTask(task);
-    res.status(201).json({ data: { taskId: createdTaskId } });
-  } catch (err) {
-    console.log("error", err);
-    res.status(500).send({ error: err });
   }
 });
 
