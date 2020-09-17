@@ -4,7 +4,6 @@
 require("dotenv").config();
 var mysql = require("mysql");
 const DBConnection = require("./DBConnection");
-// import TasksDelegate from "./tasks/TasksDelegate";
 
 var connection = mysql.createConnection({
   host: process.env.DB_HOST,
