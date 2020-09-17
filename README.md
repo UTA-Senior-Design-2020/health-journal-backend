@@ -9,13 +9,12 @@ Backend Server built with **Express js** & deployed with AWS
 
 ## 2.1 Tasks
 
-### Adding New Tasks
-
-#### URL endpoint
-POST: `/tasks`
+### 2.1.1 Adding a New Task
+```http
+POST /tasks
+```
 
 #### Request body
-
 ```
 {
 	"task": {
