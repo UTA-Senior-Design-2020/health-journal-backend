@@ -12,11 +12,6 @@ var connection = mysql.createConnection({
   database: process.env.DB,
 });
 
-// connection.connect(function (err) {
-//   if (err) throw err;
-//   console.log("Connected!");
-// });
-
 const DB = {
   /** ----- Tasks ----- */
   retrieveTask: function (taskID, callback) {
@@ -53,21 +48,6 @@ const DB = {
       validateTask(task);
     });
   },
-  // retrieveTask: function (taskID, callback) {
-  //   // need to error handle now
-  //   const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
-
-  //   DBConnection.query(sql, (err, result) => {
-  //     if (err) throw err;
-  //     if (result.length > 0){
-  //       console.log(`DB.retrieveTask(${sql}):`, result);
-  //       callback(result);
-  //     }
-  //     else {
-  //       callback('TaskID does not exist in DB');
-  //     }
-  //   });
-  // },
 
   /** ----- Patients ----- */
   retrievePatient: function (patientID, callback) {
@@ -85,19 +65,45 @@ const DB = {
     });
   },
 
+  addPatient: async function (patientObj, addressObj) {
+    validatePatient(patientObj);
+    validateAddress(addressObj);
+
+    const addressId = await this.addAddress(addressObj); // Create an address on the Address table first, then get the created ID
+    const sql = `INSERT INTO Patients SET ?`;
+    patientObj["AddressId"] = addressId;
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, patientObj, (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
   /** ----- Doctors ----- */
   retrieveDoctor: function (doctorID, callback) {
     // need to error handle now
     const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
 
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        console.log(`DB.retrieveDoctor(${sql}):`, result);
-        callback(result);
-      } else {
-        callback("DoctorID does not exist in DB");
-      }
+  /** ----- Address ----- */
+  // AddressId, Street, City, StateCode, PostalCode
+  addAddress: function (addressObj) {
+    const sql = "INSERT INTO Address SET ?";
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, addressObj, (err, result) => {
+        if (err) reject(err);
+        console.log("Result:", result);
+        const addressId = result.insertId;
+        resolve(addressId);
+      });
     });
   },
 
@@ -110,11 +116,13 @@ const DB = {
     });
   },
 
-  retrieveAllDoctors: function (callback) {
+  retrieveAllDoctors: function () {
     const sql = "SELECT * FROM Doctors;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
+    return new Promise((resolve, reject) => {
+      connection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
     });
   },
 
@@ -127,6 +135,8 @@ const DB = {
   },
 };
 
+/** ----- Validate ----- */
+
 function validateTask(task) {
   if (typeof task !== "object") {
     throw Error(
@@ -137,6 +147,14 @@ function validateTask(task) {
   if (!task.title || !task.patientId) {
     throw Error(`Task Error: Invalid Task object`);
   }
+}
+
+function validatePatient(patientObj) {
+  return true;
+}
+
+function validateAddress(addressObj) {
+  return true;
 }
 
 export default DB;
