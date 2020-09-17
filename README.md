@@ -18,13 +18,37 @@ POST /tasks
 
 #### Request Body Example
 
-```
+```http
 {
 	"task": {
 		"Title": "Run",
 		"StartDate": "2020-09-06 19:58:41",
 		"Frequency": 1,
 		"Instruction": "Start running",
+		"ImpactsAdherence": 1,
+		"TaskType": 0,
+		"PlotType": 0,
+		"PatientId": 6
+	}
+}
+```
+
+### 2.1.2 Updating a Tsak
+
+```http
+PUT /tasks
+```
+
+#### Request Body Example
+
+```http
+{
+	"task": {
+		"TaskId": "10",
+		"Title": "Run Faster",
+		"StartDate": "2020-09-06 19:58:41",
+		"Frequency": 1,
+		"Instruction": "Start running much faster",
 		"ImpactsAdherence": 1,
 		"TaskType": 0,
 		"PlotType": 0,
