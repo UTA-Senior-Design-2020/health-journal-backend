@@ -77,7 +77,7 @@ DELETE /tasks
 
 Adding a new Patient requires a Patient Address. The request body must include both the patient information and address information.
 
-```
+```http
 POST /patients
 ```
 
