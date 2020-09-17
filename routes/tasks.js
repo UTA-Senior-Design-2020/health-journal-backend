@@ -31,16 +31,14 @@ router.get("/:taskID", (req, res) => {
   }
 });
 
-router.post("/", (req, res) => {
-  const { task, patientId } = req.body;
-  console.log("request:", task, patientId);
+router.post("/", async (req, res) => {
+  const { task } = req.body;
+
   try {
-    DB.addTask(task, (data) => {
-      console.log("data from db:", data);
-      res.status(200).send({ data: data });
-    });
+    const createdTaskId = await DB.addTask(task);
+    res.status(201).json({ data: { taskId: createdTaskId } });
   } catch (err) {
-    console.log(err);
+    console.log("error", err);
     res.status(500).send({ error: err });
   }
 });

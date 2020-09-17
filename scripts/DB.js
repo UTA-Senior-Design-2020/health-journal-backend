@@ -29,23 +29,21 @@ const DB = {
     });
   },
 
-  addTask: function (task, callback) {
-    validateTask(task);
-    // need to error handle now
-    const sql = `INSERT INTO Tasks (Title, StartDate, Frequency, Instruction, ImpactsAdherence, TaskType, PatientId) VALUES ("${task.title}", "${task.startDate}", "${task.frequency}", "${task.instruction}", "${task.impactsAdherence}", "${task.taskType}", "${task.patientId}")`;
-    console.log("sql:", sql);
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      console.log(
-        `Task ${task.title} Inserted with taskID: ${result.insertId}`
-      );
-      callback(result);
-    });
-  },
+  addTask: async function (taskObj) {
+    const sql = `INSERT INTO Tasks SET ?`;
 
-  addTasks: function (tasks, callback) {
-    tasks.forEach((task) => {
-      validateTask(task);
+    return new Promise((resolve, reject) => {
+      try {
+        validateTask(taskObj);
+      } catch (error) {
+        reject(error);
+      }
+      DBConnection.query(sql, taskObj, (err, result) => {
+        if (err) reject(err);
+        console.log("res", result);
+        const taskId = result.insertId;
+        resolve(taskId);
+      });
     });
   },
 
@@ -76,7 +74,8 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, patientObj, (err, result) => {
         if (err) reject(err);
-        resolve(result);
+
+        resolve(result.insertId);
       });
     });
   },
@@ -87,6 +86,7 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
+
         resolve(result);
       });
     });
@@ -100,7 +100,7 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, addressObj, (err, result) => {
         if (err) reject(err);
-        console.log("Result:", result);
+
         const addressId = result.insertId;
         resolve(addressId);
       });
@@ -137,14 +137,12 @@ const DB = {
 
 /** ----- Validate ----- */
 
-function validateTask(task) {
-  if (typeof task !== "object") {
-    throw Error(
-      `Task Error: Required an object, instead received ${typeof task} instead.`
-    );
+function validateTask(taskObj) {
+  if (typeof taskObj !== "object") {
+    throw Error(`Required an object, instead received ${typeof task} instead.`);
   }
 
-  if (!task.title || !task.patientId) {
+  if (!taskObj.Title || !taskObj.PatientId) {
     throw Error(`Task Error: Invalid Task object`);
   }
 }
