@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node -r esm ./bin/www",
-    "dev": "nodemon -x npm run start"
+    "dev": "nodemon -x npm run start",
+    "repl": "node -i -e $(< yourScript.js)"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",

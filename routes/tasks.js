@@ -31,6 +31,20 @@ router.get("/:taskID", (req, res) => {
   }
 });
 
+router.post("/", (req, res) => {
+  const { task, patientId } = req.body;
+  console.log("request:", task, patientId);
+  try {
+    DB.addTask(task, (data) => {
+      console.log("data from db:", data);
+      res.status(200).send({ data: data });
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).send({ error: err });
+  }
+});
+
 /** ----------Helper Functions---------- */
 function validateInputID(taskID) {
   if (isNaN(taskID) || taskID.length < 0 || taskID.length > 36) {
