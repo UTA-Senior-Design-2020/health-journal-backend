@@ -21,9 +21,14 @@ POST /tasks
 ```
 {
 	"task": {
-		"title": "Node", "startDate": "2020-09-06 18:58:41",
-		"instruction": "idk", "frequency": 1, "impactAdherence": 1,
-		"patientId": 5
+		"Title": "Run",
+		"StartDate": "2020-09-06 19:58:41",
+		"Frequency": 1,
+		"Instruction": "Start running",
+		"ImpactsAdherence": 1,
+		"TaskType": 0,
+		"PlotType": 0,
+		"PatientId": 6
 	}
 }
 ```
