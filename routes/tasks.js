@@ -5,9 +5,8 @@ import DB from "../scripts/DB";
 
 /* GET users listing. */
 router.get("/", function (req, res) {
-  DB.retrieveAllTasks(function(data) {
-    res.header("Content-Type",'application/json');
-    res.send(JSON.stringify(data, null, 4));
+  DB.retrieveAllTasks(function (data) {
+    res.json(data);
   });
 });
 
@@ -18,13 +17,12 @@ router.get("/:taskID", (req, res) => {
     console.log(value);
     if (value == true) {
       DB.retrieveTask(taskID, (result) => {
-        res.header("Content-Type",'application/json');
+        res.header("Content-Type", "application/json");
         res.send(JSON.stringify(result, null, 4));
       });
-    }
-    else {
-      res.header("Content-Type",'application/json');
-      res.send(JSON.stringify('TaskID is invalid', null, 4));
+    } else {
+      res.header("Content-Type", "application/json");
+      res.send(JSON.stringify("TaskID is invalid", null, 4));
     }
   } catch (err) {
     res.status(400);
@@ -33,11 +31,9 @@ router.get("/:taskID", (req, res) => {
 
 /** ----------Helper Functions---------- */
 function validateInputID(taskID) {
-  if (isNaN(taskID) || taskID.length < 0 || taskID.length > 36){
+  if (isNaN(taskID) || taskID.length < 0 || taskID.length > 36) {
     return false;
-  }
-  else 
-    return true;
+  } else return true;
 }
 
 module.exports = router;

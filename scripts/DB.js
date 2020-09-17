@@ -4,6 +4,7 @@
 require("dotenv").config();
 var mysql = require("mysql");
 const DBConnection = require("./DBConnection");
+import TasksDelegate from "./TasksDelegate";
 
 var connection = mysql.createConnection({
   host: process.env.DB_HOST,
@@ -19,21 +20,22 @@ var connection = mysql.createConnection({
 
 const DB = {
   /** ----- Tasks ----- */
-  retrieveTask: function (taskID, callback) {
-    // need to error handle now
-    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
+  ...TasksDelegate,
+  // retrieveTask: function (taskID, callback) {
+  //   // need to error handle now
+  //   const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
 
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0){
-        console.log(`DB.retrieveTask(${sql}):`, result);
-        callback(result);
-      }
-      else {
-        callback('TaskID does not exist in DB');
-      }
-    });
-  },
+  //   DBConnection.query(sql, (err, result) => {
+  //     if (err) throw err;
+  //     if (result.length > 0){
+  //       console.log(`DB.retrieveTask(${sql}):`, result);
+  //       callback(result);
+  //     }
+  //     else {
+  //       callback('TaskID does not exist in DB');
+  //     }
+  //   });
+  // },
 
   /** ----- Patients ----- */
   retrievePatient: function (patientID, callback) {
@@ -42,12 +44,11 @@ const DB = {
 
     DBConnection.query(sql, (err, result) => {
       if (err) throw err;
-      if (result.length > 0){
+      if (result.length > 0) {
         console.log(`DB.retrievePatient(${sql}):`, result);
         callback(result);
-      }
-      else {
-        callback('PatientID does not exist in DB');
+      } else {
+        callback("PatientID does not exist in DB");
       }
     });
   },
@@ -56,22 +57,21 @@ const DB = {
   retrieveDoctor: function (doctorID, callback) {
     // need to error handle now
     const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
-    
+
     DBConnection.query(sql, (err, result) => {
       if (err) throw err;
-      if (result.length > 0){
+      if (result.length > 0) {
         console.log(`DB.retrieveDoctor(${sql}):`, result);
         callback(result);
-      }
-      else {
-        callback('DoctorID does not exist in DB');
+      } else {
+        callback("DoctorID does not exist in DB");
       }
     });
   },
 
   /** DEVELOPER MODE ONLY */
   retrieveAllPatients: function (callback) {
-    const sql = 'SELECT * FROM Patients;'
+    const sql = "SELECT * FROM Patients;";
     connection.query(sql, function (err, result) {
       if (err) throw err;
       callback(result);
@@ -79,7 +79,7 @@ const DB = {
   },
 
   retrieveAllDoctors: function (callback) {
-    const sql = 'SELECT * FROM Doctors;'
+    const sql = "SELECT * FROM Doctors;";
     connection.query(sql, function (err, result) {
       if (err) throw err;
       callback(result);
@@ -87,12 +87,12 @@ const DB = {
   },
 
   retrieveAllTasks: function (callback) {
-    const sql = 'SELECT * FROM Tasks;'
+    const sql = "SELECT * FROM Tasks;";
     connection.query(sql, function (err, result) {
       if (err) throw err;
       callback(result);
     });
-  }
+  },
 };
 
 // all working hardcoded, need aws server updated to test api
