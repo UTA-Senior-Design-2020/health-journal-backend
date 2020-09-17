@@ -1,14 +1,28 @@
-## Requests
+# Health Journal Backend  &middot; ![Deploy to Amazon ECS](https://github.com/UTA-Senior-Design-2020/health-journal-backend/workflows/Deploy%20to%20Amazon%20ECS/badge.svg?branch=master)
 
-## Tasks
+Backend Server built with **Express js** & deployed with AWS
+test
+
+## 1. Setup
+[TODO]
+
+## 2. Requests
+
+## 2.1 Tasks
 
 ### Adding New Tasks
 
-endpoint: /tasks
-body:
+#### URL endpoint
+POST: `/tasks`
+
+#### Request body
 
 ```
-{"task": {
-	"title": "Node", "startDate": "2020-09-06 18:58:41", "instruction": "idk", "frequency": 1, "impactAdherence": 1,"patientId": 5
-}}
+{
+	"task": {
+		"title": "Node", "startDate": "2020-09-06 18:58:41", 
+		"instruction": "idk", "frequency": 1, "impactAdherence": 1,
+		"patientId": 5
+	}
+}
 ```
