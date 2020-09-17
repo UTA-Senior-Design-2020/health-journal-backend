@@ -57,6 +57,20 @@ PUT /tasks
 }
 ```
 
+### 2.1.3 Deleting a Task
+
+```http
+DELETE /tasks
+```
+
+#### Request Body Example
+
+```http
+{
+	"TaskId": 5
+}
+```
+
 ## 2.2 Patients
 
 ### 2.2.1 Adding a New Patient

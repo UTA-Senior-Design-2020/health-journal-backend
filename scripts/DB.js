@@ -60,9 +60,21 @@ const DB = {
       }
       DBConnection.query(sql, taskObj, (err, result) => {
         if (err) reject(err);
-        console.log("res", result);
+
         const taskId = result.insertId;
         resolve(taskId);
+      });
+    });
+  },
+
+  deleteTask: async function (TaskId) {
+    const sql = `DELETE FROM Tasks WHERE TaskId = '${TaskId}'`;
+    console.log(sql);
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result.affectedRows);
       });
     });
   },

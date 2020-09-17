@@ -36,6 +36,17 @@ router.put("/", async (req, res) => {
   }
 });
 
+router.delete("/", async (req, res) => {
+  const { TaskId } = req.body;
+
+  try {
+    const affectedRows = await DB.deleteTask(TaskId);
+    res.status(200).json({ affectedRows: affectedRows });
+  } catch (error) {
+    res.status(500).send({ error: error });
+  }
+});
+
 router.get("/:taskID", (req, res) => {
   try {
     const taskID = req.params.taskID;
