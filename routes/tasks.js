@@ -5,27 +5,29 @@ import DB from "../scripts/DB";
 
 /* GET users listing. */
 router.get("/", function (req, res) {
-  DB.retrieveAllTasks(function (data) {
-    res.json(data);
-  });
+  try {
+    DB.retrieveAllTasks(function (data) {
+      res.json(data);
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Something went wrong" });
+  }
 });
 
 router.get("/:taskID", (req, res) => {
   try {
     const taskID = req.params.taskID;
     var value = validateInputID(taskID);
-    console.log(value);
+
     if (value == true) {
       DB.retrieveTask(taskID, (result) => {
-        res.header("Content-Type", "application/json");
-        res.send(JSON.stringify(result, null, 4));
+        res.json(result);
       });
     } else {
-      res.header("Content-Type", "application/json");
-      res.send(JSON.stringify("TaskID is invalid", null, 4));
+      res.status(404).send({ error: "Invalid TasksID" });
     }
   } catch (err) {
-    res.status(400);
+    res.status(400).send({ error: "Bad Request" });
   }
 });
 
