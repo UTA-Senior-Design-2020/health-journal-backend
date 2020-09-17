@@ -25,7 +25,7 @@ const DB = {
 
         DBConnection.query(sql, taskObj, (err, result) => {
           if (err) reject(err);
-          console.log(result);
+
           resolve(result.affectedRows);
         });
       } catch (error) {
@@ -69,7 +69,7 @@ const DB = {
 
   deleteTask: async function (TaskId) {
     const sql = `DELETE FROM Tasks WHERE TaskId = '${TaskId}'`;
-    console.log(sql);
+
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
