@@ -18,7 +18,7 @@ POST /tasks
 
 #### Request Body Example
 
-```
+```http
 {
 	"task": {
 		"Title": "Run",
@@ -33,13 +33,51 @@ POST /tasks
 }
 ```
 
+### 2.1.2 Updating a Tsak
+
+```http
+PUT /tasks
+```
+
+#### Request Body Example
+
+```http
+{
+	"task": {
+		"TaskId": "10",
+		"Title": "Run Faster",
+		"StartDate": "2020-09-06 19:58:41",
+		"Frequency": 1,
+		"Instruction": "Start running much faster",
+		"ImpactsAdherence": 1,
+		"TaskType": 0,
+		"PlotType": 0,
+		"PatientId": 6
+	}
+}
+```
+
+### 2.1.3 Deleting a Task
+
+```http
+DELETE /tasks
+```
+
+#### Request Body Example
+
+```http
+{
+	"TaskId": 5
+}
+```
+
 ## 2.2 Patients
 
 ### 2.2.1 Adding a New Patient
 
 Adding a new Patient requires a Patient Address. The request body must include both the patient information and address information.
 
-```
+```http
 POST /patients
 ```
 

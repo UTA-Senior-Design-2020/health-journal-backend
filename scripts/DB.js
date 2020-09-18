@@ -14,6 +14,26 @@ var connection = mysql.createConnection({
 
 const DB = {
   /** ----- Tasks ----- */
+  // UPDATE `dev`.`Tasks` SET `Title` = 'Jump' WHERE (`TaskId` = '5');
+
+  updateTask: async function (taskObj) {
+    const sql = `UPDATE Tasks SET ? WHERE TaskId = ${taskObj.TaskId}`;
+
+    return new Promise((resolve, reject) => {
+      try {
+        validateTask(taskObj);
+
+        DBConnection.query(sql, taskObj, (err, result) => {
+          if (err) reject(err);
+
+          resolve(result.affectedRows);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
   retrieveTask: function (taskID, callback) {
     // need to error handle now
     const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
@@ -40,9 +60,21 @@ const DB = {
       }
       DBConnection.query(sql, taskObj, (err, result) => {
         if (err) reject(err);
-        console.log("res", result);
+
         const taskId = result.insertId;
         resolve(taskId);
+      });
+    });
+  },
+
+  deleteTask: async function (TaskId) {
+    const sql = `DELETE FROM Tasks WHERE TaskId = '${TaskId}'`;
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result.affectedRows);
       });
     });
   },
@@ -140,10 +172,6 @@ const DB = {
 function validateTask(taskObj) {
   if (typeof taskObj !== "object") {
     throw Error(`Required an object, instead received ${typeof task} instead.`);
-  }
-
-  if (!taskObj.Title || !taskObj.PatientId) {
-    throw Error(`Task Error: Invalid Task object`);
   }
 }
 
