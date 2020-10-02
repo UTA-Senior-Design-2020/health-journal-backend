@@ -1,7 +1,7 @@
 var express = require("express");
 var router = express.Router();
 // import tasks from "../stubs/tasks";
-import DB from "../scripts/DB";
+import DB from "../database/DB";
 
 /* GET users listing. */
 router.get("/", function (req, res) {
