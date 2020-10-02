@@ -4,11 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node -r esm ./bin/www",
-    "dev": "nodemon -x npm run start"
+    "dev": "nodemon -x npm run start",
+    "repl": "node -i -e $(< yourScript.js)"
   },
   "dependencies": {
     "cookie-parser": "~1.4.4",
     "debug": "~2.6.9",
+    "dotenv": "^8.2.0",
     "esm": "^3.2.25",
     "express": "~4.16.1",
     "morgan": "~1.9.1",

@@ -6,6 +6,7 @@ var rfs = require("rotating-file-stream");
 var indexRouter = require("./routes/index");
 var patientsRouter = require("./routes/patients");
 let tasksRouter = require("./routes/tasks");
+var doctorsRouter = require("./routes/doctors");
 
 var app = express();
 
@@ -30,7 +31,8 @@ if (app.get("env") === "production") {
 }
 
 app.use("/", indexRouter);
-app.use("/api/patients", patientsRouter);
-app.use("/api/tasks", tasksRouter);
+app.use("/patients", patientsRouter);
+app.use("/tasks", tasksRouter);
+app.use("/doctors", doctorsRouter);
 
 module.exports = app;

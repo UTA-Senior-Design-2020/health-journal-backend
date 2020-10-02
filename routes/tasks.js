@@ -5,30 +5,70 @@ import DB from "../database/DB";
 
 /* GET users listing. */
 router.get("/", function (req, res) {
-  const tasks = DB.retrieveAllTasks();
+  try {
+    DB.retrieveAllTasks(function (data) {
+      res.json(data);
+    });
+  } catch (err) {
+    res.status(400).send({ error: "Something went wrong" });
+  }
+});
 
-  res.status(200);
-  res.json(tasks);
+router.post("/", async (req, res) => {
+  const { task } = req.body;
+
+  try {
+    const createdTaskId = await DB.addTask(task);
+    res.status(201).json({ data: { taskId: createdTaskId } });
+  } catch (error) {
+    res.status(500).send({ error: error });
+  }
+});
+
+router.put("/", async (req, res) => {
+  const { task } = req.body;
+
+  try {
+    await DB.updateTask(task);
+    res.status(200).json({ data: { TaskId: task.TaskId } });
+  } catch (error) {
+    res.status(500).send({ error: error });
+  }
+});
+
+router.delete("/", async (req, res) => {
+  const { TaskId } = req.body;
+
+  try {
+    const affectedRows = await DB.deleteTask(TaskId);
+    res.status(200).json({ affectedRows: affectedRows });
+  } catch (error) {
+    res.status(500).send({ error: error });
+  }
 });
 
 router.get("/:taskID", (req, res) => {
-  let taskID = req.params.taskID; // CHANGE THIS SOON...
   try {
-    const task = DB.retrieveTask(taskID);
+    const taskID = req.params.taskID;
+    var value = validateInputID(taskID);
 
-    res.status(200);
-    res.json(task);
-  } catch (error) {
-    console.error(error);
-    res.status(400);
-    res.send(error.message);
+    if (value == true) {
+      DB.retrieveTask(taskID, (result) => {
+        res.json(result);
+      });
+    } else {
+      res.status(404).send({ error: "Invalid TasksID" });
+    }
+  } catch (err) {
+    res.status(400).send({ error: "Bad Request" });
   }
 });
 
 /** ----------Helper Functions---------- */
 function validateInputID(taskID) {
-  if (taskID.length < 0 || taskID.length > 36)
-    throw Error(`Patient ID '${taskID}' is too long`);
+  if (isNaN(taskID) || taskID.length < 0 || taskID.length > 36) {
+    return false;
+  } else return true;
 }
 
 module.exports = router;
