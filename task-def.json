@@ -1,0 +1,79 @@
+{
+  "executionRoleArn": "arn:aws:iam::180437669372:role/ecsTaskExecutionRole",
+  "containerDefinitions": [
+    {
+      "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+          "awslogs-group": "/ecs/first-run-task-definition",
+          "awslogs-region": "us-east-1",
+          "awslogs-stream-prefix": "ecs"
+        }
+      },
+      "entryPoint": [],
+      "portMappings": [
+        {
+          "hostPort": 5000,
+          "protocol": "tcp",
+          "containerPort": 5000
+        }
+      ],
+      "command": [],
+      "cpu": 256,
+      "environment": [],
+
+      "mountPoints": [],
+      "memoryReservation": 512,
+      "volumesFrom": [],
+      "image": "180437669372.dkr.ecr.us-east-1.amazonaws.com/health-journal-backend:6fb558b0333cb701d0bcf0d32f377d5883df6404",
+      "essential": true,
+      "links": [],
+      "name": "backend-container"
+    }
+  ],
+  "placementConstraints": [],
+  "memory": "512",
+  "compatibilities": [
+    "EC2",
+    "FARGATE"
+  ],
+  "taskDefinitionArn": "arn:aws:ecs:us-east-1:180437669372:task-definition/first-run-task-definition:2",
+  "family": "first-run-task-definition",
+  "requiresAttributes": [
+    {
+      "name": "com.amazonaws.ecs.capability.logging-driver.awslogs"
+    },
+    {
+      "name": "ecs.capability.execution-role-awslogs"
+    },
+    {
+      "targetId": null,
+      "targetType": null,
+      "value": null,
+      "name": "com.amazonaws.ecs.capability.ecr-auth"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.19"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.21"
+    },
+    {
+      "name": "ecs.capability.execution-role-ecr-pull"
+    },
+    {
+      "name": "com.amazonaws.ecs.capability.docker-remote-api.1.18"
+    },
+    {
+      "name": "ecs.capability.task-eni"
+    }
+  ],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "256",
+  "revision": 2,
+  "status": "ACTIVE",
+  "volumes": []
+}

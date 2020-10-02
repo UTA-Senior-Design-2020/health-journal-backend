@@ -1,6 +1,6 @@
 var express = require("express");
 var router = express.Router();
-import DB from "../scripts/DB";
+import DB from "../database/DB";
 
 /** GET All Doctors*/
 router.get("/", async function (req, res) {
