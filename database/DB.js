@@ -145,12 +145,14 @@ const DB = {
   },
 
   /** DEVELOPER MODE ONLY */
-  retrieveAllPatients: function (callback) {
+  retrieveAllPatients: function () {
     const sql = "SELECT * FROM Patients;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
-    });
+    return new Promise((resolve, reject) => {
+      connection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    })
   },
 
   retrieveAllDoctors: function () {
@@ -163,12 +165,16 @@ const DB = {
     });
   },
 
-  retrieveAllTasks: function (callback) {
+  retrieveAllTasks: async function () {
     const sql = "SELECT * FROM Tasks;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
-    });
+
+    return new Promise((resolve, reject) => {
+      connection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+
+    })
   },
 };
 

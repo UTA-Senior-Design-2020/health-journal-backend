@@ -2,6 +2,23 @@ var express = require("express");
 var router = express.Router();
 import DB from "../database/DB";
 
+router.get("/:taskID", async (req, res) => {
+  try {
+    const taskID = req.params.taskID;
+    if (!validateInputID(taskID)) throw ("task/taskID.error", err);
+
+    const result = await DB.retrieveTask(taskID);
+    res.json(result);
+  } catch (err) {
+    console.log(err);
+    res.status(400).send(err);
+  }
+});
+
+
+// ------------- TODO: Refactor bellow this --------------------
+
+
 /* GET users listing. */
 router.get("/", function (req, res) {
   try {
@@ -71,18 +88,7 @@ router.delete("/", async (req, res) => {
   }
 });
 
-router.get("/:taskID", (req, res) => {
-  try {
-    const taskID = req.params.taskID;
-    if (!validateInputID(taskID)) throw ("task/taskID.error", err);
 
-    const result = await DB.retrieveTask(taskID);
-    res.json(result);
-  } catch (err) {
-    console.log(err);
-    res.status(400).send(err);
-  }
-});
 
 /** ----------Helper Functions---------- */
 function validateInputID(taskID) {
