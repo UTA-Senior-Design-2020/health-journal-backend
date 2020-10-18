@@ -20,7 +20,7 @@ router.get("/:patientID", async function (req, res) {
     const patientID = req.params.patientID;
     if (!validateInputID(patientID)) res.status(400).send("PatientID is invalid");
 
-    const result = DB.retrievePatient(patientID);
+    const result = await DB.retrievePatient(patientID);
     res.send(result);
   } catch (err) {
     res.status(400).send(err);

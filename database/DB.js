@@ -5,13 +5,6 @@ require("dotenv").config();
 var mysql = require("mysql");
 const DBConnection = require("./DBConnection");
 
-var connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB,
-});
-
 const DB = {
   /** ----- Tasks ----- */
   // UPDATE `dev`.`Tasks` SET `Title` = 'Jump' WHERE (`TaskId` = '5');
@@ -108,19 +101,17 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, patientObj, (err, result) => {
         if (err) reject(err);
-
         resolve(result.insertId);
       });
     });
   },
   /** ----- Doctors ----- */
-  retrieveDoctor: function (doctorID, callback) {
-    // need to error handle now
+  retrieveDoctor: async function (doctorID) {
     const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
+
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
-
         resolve(result);
       });
     });
@@ -134,16 +125,15 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, addressObj, (err, result) => {
         if (err) reject(err);
-
-        const addressId = result.insertId;
         resolve(addressId);
       });
     });
   },
 
   /** DEVELOPER MODE ONLY */
-  retrieveAllPatients: function () {
+  retrieveAllPatients: async function () {
     const sql = "SELECT * FROM Patients;";
+
     return new Promise((resolve, reject) => {
       connection.query(sql, function (err, result) {
         if (err) reject(err);
@@ -152,8 +142,9 @@ const DB = {
     })
   },
 
-  retrieveAllDoctors: function () {
+  retrieveAllDoctors: async function () {
     const sql = "SELECT * FROM Doctors;";
+
     return new Promise((resolve, reject) => {
       connection.query(sql, function (err, result) {
         if (err) reject(err);
