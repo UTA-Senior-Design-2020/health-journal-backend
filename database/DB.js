@@ -80,6 +80,9 @@ const DB = {
   },
 
   /** ----- Patients ----- */
+  /** retrievePatient returns a patient by the given patientID
+   * @param patientID id of the patient following a [INSERT PATIENT ID REQUIREMENTS]
+   **/
   retrievePatient: function (patientID, callback) {
     // need to error handle now
     const sql = `SELECT * FROM Patients WHERE PatientId = ${patientID}`;

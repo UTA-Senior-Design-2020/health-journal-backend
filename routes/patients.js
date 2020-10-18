@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 import DB from "../database/DB";
 
-/** GET All Patients*/
+/** GET All Patients */
 router.get("/", function (req, res) {
   DB.retrieveAllPatients(function (data) {
     res.header("Content-Type", "application/json");
@@ -10,8 +10,13 @@ router.get("/", function (req, res) {
   });
 });
 
-/**  GET patient by ID */
+/**  GET patient by ID 
+ * @returns  
+ */
 router.get("/:patientID", function (req, res) {
+  try {
+    DB.retrieveAllPatients
+  }
   try {
     const patientID = req.params.patientID;
     var value = validateInputID(patientID);
@@ -31,7 +36,10 @@ router.get("/:patientID", function (req, res) {
 });
 
 router.post("/", async function (req, res, next) {
-  const { patient, address } = req.body;
+  const {
+    patient,
+    address
+  } = req.body;
   console.log("POST Patients/", req.body);
 
   let result = await DB.addPatient(patient, address);
