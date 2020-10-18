@@ -15,23 +15,15 @@ router.get("/", async function (req, res) {
 /**  GET patient by ID 
  * @returns  
  */
-router.get("/:patientID", function (req, res) {
-
+router.get("/:patientID", async function (req, res) {
   try {
     const patientID = req.params.patientID;
-    var value = validateInputID(patientID);
-    console.log(value);
-    if (value == true) {
-      DB.retrievePatient(patientID, (result) => {
-        res.header("Content-Type", "application/json");
-        res.send(JSON.stringify(result, null, 4));
-      });
-    } else {
-      res.header("Content-Type", "application/json");
-      res.send(JSON.stringify("PatientID is invalid", null, 4));
-    }
+    if (!validateInputID(patientID)) res.status(400).send("PatientID is invalid");
+
+    const result = DB.retrievePatient(patientID);
+    res.send(result);
   } catch (err) {
-    res.status(400);
+    res.status(400).send(err);
   }
 });
 

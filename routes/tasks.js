@@ -25,11 +25,6 @@ router.get("/", async function (req, res) {
   }
 });
 
-// TODO: Refactor bellow this --------------------
-
-
-
-
 router.post("/", async (req, res) => {
   const {
     task

@@ -85,18 +85,15 @@ const DB = {
   /** retrievePatient returns a patient by the given patientID
    * @param patientID id of the patient following a [INSERT PATIENT ID REQUIREMENTS]
    **/
-  retrievePatient: function (patientID, callback) {
-    // need to error handle now
+  retrievePatient: async function (patientID, callback) {
     const sql = `SELECT * FROM Patients WHERE PatientId = ${patientID}`;
 
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        console.log(`DB.retrievePatient(${sql}):`, result);
-        callback(result);
-      } else {
-        callback("PatientID does not exist in DB");
-      }
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+        if (result.length > 0) resolve(result);
+        else resolve("PatientID does not exist in DB");
+      });
     });
   },
 
