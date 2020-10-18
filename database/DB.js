@@ -34,17 +34,19 @@ const DB = {
     });
   },
 
-  retrieveTask: function (taskID, callback) {
-    // need to error handle now
+  retrieveTask: async function (taskID) {
     const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
 
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        console.log(`DB.retrieveTask(${sql}):`, result);
-        callback(result);
-      } else {
-        callback("TaskID does not exist in DB");
+    return new Promise((resolve, reject) => {
+      try {
+        // TODO: Validate 
+        DBConnection.query(sql, (err, result) => {
+          if (err) reject(err);
+          console.log("DB.retrieveTask.result->", result);
+          resolve(result.affectedRows);
+        });
+      } catch (err) {
+        reject(err)
       }
     });
   },

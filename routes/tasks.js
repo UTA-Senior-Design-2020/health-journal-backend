@@ -74,21 +74,13 @@ router.delete("/", async (req, res) => {
 router.get("/:taskID", (req, res) => {
   try {
     const taskID = req.params.taskID;
-    var value = validateInputID(taskID);
+    if (!validateInputID(taskID)) throw ("task/taskID.error", err);
 
-    if (value == true) {
-      DB.retrieveTask(taskID, (result) => {
-        res.json(result);
-      });
-    } else {
-      res.status(404).send({
-        error: "Invalid TasksID"
-      });
-    }
+    const result = await DB.retrieveTask(taskID);
+    res.json(result);
   } catch (err) {
-    res.status(400).send({
-      error: "Bad Request"
-    });
+    console.log(err);
+    res.status(400).send(err);
   }
 });
 
