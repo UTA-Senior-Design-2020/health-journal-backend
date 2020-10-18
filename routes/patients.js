@@ -3,20 +3,20 @@ var router = express.Router();
 import DB from "../database/DB";
 
 /** GET All Patients */
-router.get("/", function (req, res) {
-  DB.retrieveAllPatients(function (data) {
-    res.header("Content-Type", "application/json");
-    res.send(JSON.stringify(data, null, 4));
-  });
+router.get("/", async function (req, res) {
+  try {
+    const result = await DB.retrieveAllPatients();
+    res.send(result);
+  } catch (err) {
+    res.status(400).send(err);
+  }
 });
 
 /**  GET patient by ID 
  * @returns  
  */
 router.get("/:patientID", function (req, res) {
-  try {
-    DB.retrieveAllPatients
-  }
+
   try {
     const patientID = req.params.patientID;
     var value = validateInputID(patientID);

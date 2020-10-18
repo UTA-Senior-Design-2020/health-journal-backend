@@ -15,22 +15,19 @@ router.get("/:taskID", async (req, res) => {
   }
 });
 
-
-// ------------- TODO: Refactor bellow this --------------------
-
-
 /* GET users listing. */
-router.get("/", function (req, res) {
+router.get("/", async function (req, res) {
   try {
-    DB.retrieveAllTasks(function (data) {
-      res.json(data);
-    });
+    const result = DB.retrieveAllTasks();
+    res.json(result);
   } catch (err) {
-    res.status(400).send({
-      error: "Something went wrong"
-    });
+    res.status(400).send(err);
   }
 });
+
+// TODO: Refactor bellow this --------------------
+
+
 
 
 router.post("/", async (req, res) => {

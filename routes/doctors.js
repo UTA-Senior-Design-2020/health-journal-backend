@@ -5,7 +5,7 @@ import DB from "../database/DB";
 /** GET All Doctors*/
 router.get("/", async function (req, res) {
   const data = await DB.retrieveAllDoctors();
-  res.status(200).json(data);
+  res.json(data);
 });
 
 /**  GET doctor by ID */
