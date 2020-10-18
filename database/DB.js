@@ -5,16 +5,26 @@ require("dotenv").config();
 var mysql = require("mysql");
 const DBConnection = require("./DBConnection");
 
-var connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB,
-});
-
 const DB = {
   /** ----- Tasks ----- */
   // UPDATE `dev`.`Tasks` SET `Title` = 'Jump' WHERE (`TaskId` = '5');
+
+  retrieveTask: async function (taskID) {
+    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
+
+    return new Promise((resolve, reject) => {
+      try {
+        // TODO: Validate 
+        DBConnection.query(sql, (err, result) => {
+          if (err) reject(err);
+          console.log("DB.retrieveTask.result->", result);
+          resolve(result);
+        });
+      } catch (err) {
+        reject(err)
+      }
+    });
+  },
 
   updateTask: async function (taskObj) {
     const sql = `UPDATE Tasks SET ? WHERE TaskId = ${taskObj.TaskId}`;
@@ -34,20 +44,7 @@ const DB = {
     });
   },
 
-  retrieveTask: function (taskID, callback) {
-    // need to error handle now
-    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
 
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        console.log(`DB.retrieveTask(${sql}):`, result);
-        callback(result);
-      } else {
-        callback("TaskID does not exist in DB");
-      }
-    });
-  },
 
   addTask: async function (taskObj) {
     const sql = `INSERT INTO Tasks SET ?`;
@@ -80,18 +77,18 @@ const DB = {
   },
 
   /** ----- Patients ----- */
-  retrievePatient: function (patientID, callback) {
-    // need to error handle now
+  /** retrievePatient returns a patient by the given patientID
+   * @param patientID id of the patient following a [INSERT PATIENT ID REQUIREMENTS]
+   **/
+  retrievePatient: async function (patientID, callback) {
     const sql = `SELECT * FROM Patients WHERE PatientId = ${patientID}`;
 
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        console.log(`DB.retrievePatient(${sql}):`, result);
-        callback(result);
-      } else {
-        callback("PatientID does not exist in DB");
-      }
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+        if (result.length > 0) resolve(result);
+        else resolve("PatientID does not exist in DB");
+      });
     });
   },
 
@@ -106,19 +103,17 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, patientObj, (err, result) => {
         if (err) reject(err);
-
         resolve(result.insertId);
       });
     });
   },
   /** ----- Doctors ----- */
-  retrieveDoctor: function (doctorID, callback) {
-    // need to error handle now
+  retrieveDoctor: async function (doctorID) {
     const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
+
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
-
         resolve(result);
       });
     });
@@ -132,38 +127,44 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, addressObj, (err, result) => {
         if (err) reject(err);
-
-        const addressId = result.insertId;
         resolve(addressId);
       });
     });
   },
 
   /** DEVELOPER MODE ONLY */
-  retrieveAllPatients: function (callback) {
+  retrieveAllPatients: async function () {
     const sql = "SELECT * FROM Patients;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
-    });
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    })
   },
 
-  retrieveAllDoctors: function () {
+  retrieveAllDoctors: async function () {
     const sql = "SELECT * FROM Doctors;";
+
     return new Promise((resolve, reject) => {
-      connection.query(sql, function (err, result) {
+      DBConnection.query(sql, function (err, result) {
         if (err) reject(err);
         resolve(result);
       });
     });
   },
 
-  retrieveAllTasks: function (callback) {
+  retrieveAllTasks: async function () {
     const sql = "SELECT * FROM Tasks;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
-    });
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+
+    })
   },
 };
 
