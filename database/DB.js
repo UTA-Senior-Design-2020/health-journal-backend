@@ -9,6 +9,23 @@ const DB = {
   /** ----- Tasks ----- */
   // UPDATE `dev`.`Tasks` SET `Title` = 'Jump' WHERE (`TaskId` = '5');
 
+  retrieveTask: async function (taskID) {
+    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
+
+    return new Promise((resolve, reject) => {
+      try {
+        // TODO: Validate 
+        DBConnection.query(sql, (err, result) => {
+          if (err) reject(err);
+          console.log("DB.retrieveTask.result->", result);
+          resolve(result);
+        });
+      } catch (err) {
+        reject(err)
+      }
+    });
+  },
+
   updateTask: async function (taskObj) {
     const sql = `UPDATE Tasks SET ? WHERE TaskId = ${taskObj.TaskId}`;
 
@@ -27,22 +44,7 @@ const DB = {
     });
   },
 
-  retrieveTask: async function (taskID) {
-    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
 
-    return new Promise((resolve, reject) => {
-      try {
-        // TODO: Validate 
-        DBConnection.query(sql, (err, result) => {
-          if (err) reject(err);
-          console.log("DB.retrieveTask.result->", result);
-          resolve(result.affectedRows);
-        });
-      } catch (err) {
-        reject(err)
-      }
-    });
-  },
 
   addTask: async function (taskObj) {
     const sql = `INSERT INTO Tasks SET ?`;
@@ -135,7 +137,7 @@ const DB = {
     const sql = "SELECT * FROM Patients;";
 
     return new Promise((resolve, reject) => {
-      connection.query(sql, function (err, result) {
+      DBConnection.query(sql, function (err, result) {
         if (err) reject(err);
         resolve(result);
       });
@@ -146,7 +148,7 @@ const DB = {
     const sql = "SELECT * FROM Doctors;";
 
     return new Promise((resolve, reject) => {
-      connection.query(sql, function (err, result) {
+      DBConnection.query(sql, function (err, result) {
         if (err) reject(err);
         resolve(result);
       });
@@ -157,7 +159,7 @@ const DB = {
     const sql = "SELECT * FROM Tasks;";
 
     return new Promise((resolve, reject) => {
-      connection.query(sql, function (err, result) {
+      DBConnection.query(sql, function (err, result) {
         if (err) reject(err);
         resolve(result);
       });

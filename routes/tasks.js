@@ -2,6 +2,16 @@ var express = require("express");
 var router = express.Router();
 import DB from "../database/DB";
 
+/* GET users listing. */
+router.get("/", async function (req, res) {
+  try {
+    const result = await DB.retrieveAllTasks();
+    res.json(result);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
 router.get("/:taskID", async (req, res) => {
   try {
     const taskID = req.params.taskID;
@@ -15,15 +25,6 @@ router.get("/:taskID", async (req, res) => {
   }
 });
 
-/* GET users listing. */
-router.get("/", async function (req, res) {
-  try {
-    const result = DB.retrieveAllTasks();
-    res.json(result);
-  } catch (err) {
-    res.status(400).send(err);
-  }
-});
 
 router.post("/", async (req, res) => {
   const {
