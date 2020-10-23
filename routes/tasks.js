@@ -7,7 +7,7 @@ import DB from "../database/DB";
 router.get("/", function (req, res) {
   try {
     DB.retrieveAllTasks(function (data) {
-      res.json(data);
+      res.json({ "tasks": data });
     });
   } catch (err) {
     res.status(400).send({ error: "Something went wrong" });
@@ -54,7 +54,7 @@ router.get("/:taskID", (req, res) => {
 
     if (value == true) {
       DB.retrieveTask(taskID, (result) => {
-        res.json(result);
+        res.json({ "tasks": result });
       });
     } else {
       res.status(404).send({ error: "Invalid TasksID" });
