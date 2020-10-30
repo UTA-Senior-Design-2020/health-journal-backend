@@ -7,6 +7,7 @@ var indexRouter = require("./routes/index");
 var patientsRouter = require("./routes/patients");
 let tasksRouter = require("./routes/tasks");
 var doctorsRouter = require("./routes/doctors");
+var cors = require('cors');
 
 var app = express();
 
@@ -31,6 +32,9 @@ if (app.get("env") === "production") {
 } else {
   app.use(logger("dev"));
 }
+app.use(cors({
+  origin: 'http://localhost:3000'
+}));
 
 app.use("/", indexRouter);
 app.use("/patients", patientsRouter);

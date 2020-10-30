@@ -107,6 +107,8 @@ const DB = {
       });
     });
   },
+
+
   /** ----- Doctors ----- */
   retrieveDoctor: async function (doctorID) {
     const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
@@ -118,6 +120,10 @@ const DB = {
       });
     });
   },
+
+
+
+
 
   /** ----- Address ----- */
   // AddressId, Street, City, StateCode, PostalCode
