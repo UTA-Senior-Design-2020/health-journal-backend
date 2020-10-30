@@ -111,6 +111,7 @@ const DB = {
       });
     });
   },
+  
   /** ----- Doctors ----- */
   retrieveDoctor: function (doctorID, callback) {
     // need to error handle now
@@ -120,6 +121,56 @@ const DB = {
         if (err) reject(err);
 
         resolve(result);
+      });
+    });
+  },
+
+  updateDoctor: async function (doctorObj) {
+    const sql = `UPDATE Doctors SET DoctorId = ?, GivenName = ?, FamilyName = ?, ProfilePicture = ?, 
+    Title = ?, Description = ?, Email = ?, CallPhone = ?, TextPhone = ?, AddressId = ? WHERE DoctorId = ${doctorObj.DoctorId}`;
+
+    return new Promise((resolve, reject) => {
+      try {
+        validateDoctor(doctorObj);
+
+        DBConnection.query(sql, [doctorObj.DoctorId, doctorObj.GivenName, doctorObj.FamilyName, 
+          doctorObj.ProfilePicture, doctorObj.Title, doctorObj.Description, doctorObj.Email, 
+          doctorObj.CallPhone, doctorObj.TextPhone, doctorObj.AddressId], (err, result) => {
+          console.log(result);
+          if (err) reject(err);
+          resolve(result.affectedRows);
+        });
+      } catch (error) {
+        reject(error);
+      }
+    });
+  },
+
+  addDoctor: async function (doctorObj) {
+    const sql = `INSERT INTO Doctors SET ?`;
+    
+    return new Promise((resolve, reject) => {
+      try {
+        validateDoctor(doctorObj);
+      } catch (error) {
+        reject(error);
+      }
+      DBConnection.query(sql, doctorObj, (err, result) => {
+        if (err) reject(err);
+        const doctorId = result.insertId;
+        resolve(doctorId);
+      });
+    });
+  },
+
+  deleteDoctor: async function (doctorObj) {
+    const sql = `DELETE FROM Doctors WHERE DoctorId = '${doctorObj.DoctorId}'`;
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result.affectedRows);
       });
     });
   },
@@ -148,13 +199,11 @@ const DB = {
     });
   },
 
-  retrieveAllDoctors: function () {
+  retrieveAllDoctors: function (callback) {
     const sql = "SELECT * FROM Doctors;";
-    return new Promise((resolve, reject) => {
-      connection.query(sql, function (err, result) {
-        if (err) reject(err);
-        resolve(result);
-      });
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      callback(result);
     });
   },
 
@@ -173,6 +222,10 @@ function validateTask(taskObj) {
   if (typeof taskObj !== "object") {
     throw Error(`Required an object, instead received ${typeof task} instead.`);
   }
+}
+
+function validateDoctor(doctorObj) {
+  return true;
 }
 
 function validatePatient(patientObj) {
