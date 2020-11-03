@@ -74,6 +74,24 @@ const DB = {
     });
   },
 
+  /** ----- Tasks Logs ----- */
+  // TODO
+  completeTask: async function (patientID, taskID, dateCompleted, notes) {
+    const sql = `
+      INSERT INTO TaskLog(TaskId, DateCompleted, Notes)
+      VALUES(${taskID}, '${dateCompleted}', '${notes}')`;
+
+    // TODO - verify that the given patient owns this task
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result);
+      });
+    });
+  },
+
   /** ----- Patients ----- */
   /** retrievePatient returns a patient by the given patientID
    * @param patientID id of the patient following a [INSERT PATIENT ID REQUIREMENTS]

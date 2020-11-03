@@ -41,6 +41,29 @@ router.get("/:patientID/tasks/", async function (req, res) {
     res.status(400).send(err);
   }
 });
+/**
+ * @param req.body = {
+      "dateCompleted": "2020-09-06 00:00:00",
+      "notes": "Created with postman."
+    }
+ */
+router.post("/:patientID/tasks/:taskID", async (req, res) => {
+  try {
+    const { patientID, taskID } = req.params;
+    const { dateCompleted, notes } = req.body;
+    console.log("info:", patientID, taskID, dateCompleted, notes);
+
+    const result = await DB.completeTask(
+      patientID,
+      taskID,
+      dateCompleted,
+      notes
+    );
+    res.send(result);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
 
 router.post("/", async function (req, res, next) {
   const { patient, address } = req.body;
