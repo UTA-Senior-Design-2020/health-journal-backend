@@ -12,13 +12,14 @@ router.get("/", async function (req, res) {
   }
 });
 
-/**  GET patient by ID 
- * @returns  
+/**  GET patient by ID
+ * @returns
  */
 router.get("/:patientID", async function (req, res) {
   try {
     const patientID = req.params.patientID;
-    if (!validateInputID(patientID)) res.status(400).send("PatientID is invalid");
+    if (!validateInputID(patientID))
+      res.status(400).send("PatientID is invalid");
 
     const result = await DB.retrievePatient(patientID);
     res.send(result);
@@ -27,11 +28,22 @@ router.get("/:patientID", async function (req, res) {
   }
 });
 
+/**  GET patients tasks
+ * @returns
+ */
+router.get("/:patientID/tasks/", async function (req, res) {
+  try {
+    const { patientID } = req.params;
+
+    const result = await DB.retrievePatientTasks(patientID);
+    res.send(result);
+  } catch (err) {
+    res.status(400).send(err);
+  }
+});
+
 router.post("/", async function (req, res, next) {
-  const {
-    patient,
-    address
-  } = req.body;
+  const { patient, address } = req.body;
   console.log("POST Patients/", req.body);
 
   let result = await DB.addPatient(patient, address);

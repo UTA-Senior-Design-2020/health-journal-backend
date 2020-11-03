@@ -14,14 +14,14 @@ const DB = {
 
     return new Promise((resolve, reject) => {
       try {
-        // TODO: Validate 
+        // TODO: Validate
         DBConnection.query(sql, (err, result) => {
           if (err) reject(err);
           console.log("DB.retrieveTask.result->", result);
           resolve(result);
         });
       } catch (err) {
-        reject(err)
+        reject(err);
       }
     });
   },
@@ -44,8 +44,6 @@ const DB = {
     });
   },
 
-
-
   addTask: async function (taskObj) {
     const sql = `INSERT INTO Tasks SET ?`;
 
@@ -59,7 +57,7 @@ const DB = {
         if (err) reject(err);
 
         const taskId = result.insertId;
-        resolve(taskId);
+        resolve(formatResponse(taskId));
       });
     });
   },
@@ -71,7 +69,7 @@ const DB = {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
 
-        resolve(result.affectedRows);
+        resolve(formatResponse(result.affectedRows));
       });
     });
   },
@@ -80,14 +78,14 @@ const DB = {
   /** retrievePatient returns a patient by the given patientID
    * @param patientID id of the patient following a [INSERT PATIENT ID REQUIREMENTS]
    **/
-  retrievePatient: async function (patientID, callback) {
+  retrievePatient: async function (patientID) {
     const sql = `SELECT * FROM Patients WHERE PatientId = ${patientID}`;
 
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
         if (result.length > 0) resolve(result);
-        else resolve("PatientID does not exist in DB");
+        else reject("PatientID does not exist in DB");
       });
     });
   },
@@ -103,11 +101,51 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, patientObj, (err, result) => {
         if (err) reject(err);
-        resolve(result.insertId);
+        resolve(formatResponse(result.insertId));
       });
     });
   },
 
+  retrievePatientTasks: async function (patientID) {
+    const sql = `
+      SELECT * 
+      FROM Tasks 
+      WHERE PatientId=${patientID}`;
+
+    return new Promise((resolve, reject) => {
+      if (!validatePatient(patientID)) reject("Bad PatientId given");
+
+      DBConnection.query(sql, (err, result) => {
+        console.log(sql, result);
+        if (err) reject(err);
+        resolve(formatResponse(result));
+      });
+    });
+  },
+
+  /** retrievePatientTasksByDay - Will return all of the given patients Tasks for the day given.
+   *  @param day - year-month-day example: "2020-09-06"
+   *  @returns
+   */
+  retrievePatientTasksByDay: async function (patientID, day) {
+    const sql = `
+      SELECT * 
+      FROM Tasks 
+      WHERE PatientId=${patientID}
+      AND StartDate between '${day} 00:00:00' and '${day} 23:59:59'`;
+
+    return new Promise((resolve, reject) => {
+      if (!validatePatient(patientID)) reject("Bad PatientId given");
+
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+        resolve(formatResponse(result));
+      });
+    });
+  },
+
+  // TODO
+  retrievePatientTasksPast7Days: async (patientId, startDay, endDay) => {},
 
   /** ----- Doctors ----- */
   retrieveDoctor: async function (doctorID) {
@@ -116,14 +154,10 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
-        resolve(result);
+        resolve(formatResponse(result));
       });
     });
   },
-
-
-
-
 
   /** ----- Address ----- */
   // AddressId, Street, City, StateCode, PostalCode
@@ -147,7 +181,7 @@ const DB = {
         if (err) reject(err);
         resolve(result);
       });
-    })
+    });
   },
 
   retrieveAllDoctors: async function () {
@@ -169,10 +203,14 @@ const DB = {
         if (err) reject(err);
         resolve(result);
       });
-
-    })
+    });
   },
 };
+
+/** ----- Helpers ----- */
+function formatResponse(response) {
+  return { data: response };
+}
 
 /** ----- Validate ----- */
 
