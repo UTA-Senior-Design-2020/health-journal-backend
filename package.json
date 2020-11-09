@@ -8,7 +8,9 @@
     "repl": "node -i -e $(< yourScript.js)"
   },
   "dependencies": {
+    "body-parser": "^1.19.0",
     "cookie-parser": "~1.4.4",
+    "cors": "^2.8.5",
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "esm": "^3.2.25",

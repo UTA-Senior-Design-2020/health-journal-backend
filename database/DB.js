@@ -190,6 +190,35 @@ const DB = {
     });
   },
 
+  /** ----- Todos ----- */
+  retrieveTodo: function (doctorID, callback) {
+    // need to error handle now
+    const sql = `SELECT * FROM Todos WHERE DoctorId = ${doctorID}`;
+
+    DBConnection.query(sql, (err, result) => {
+      if (err) throw err;
+      if (result.length > 0) {
+        console.log(`DB.retrieveTodo(${sql}):`, result);
+        callback(result);
+      } else {
+        callback("DoctorID does not exist in DB");
+      }
+    });
+  },
+
+  addTodo: function (todoObj) {
+    const sql = `INSERT INTO Todos SET ?`;
+    console.log(todoObj);
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, todoObj, (err, result) => {
+        if (err) reject(err);
+
+        const todoId = result.insertId;
+        resolve(todoId);
+      });
+    });
+  },
+
   /** DEVELOPER MODE ONLY */
   retrieveAllPatients: function (callback) {
     const sql = "SELECT * FROM Patients;";
@@ -209,6 +238,15 @@ const DB = {
 
   retrieveAllTasks: function (callback) {
     const sql = "SELECT * FROM Tasks;";
+    connection.query(sql, function (err, result) {
+      if (err) throw err;
+      callback(result);
+    });
+  },
+
+  retrieveAllTodos: function (callback) {
+    // need to error handle now
+    const sql = "SELECT * FROM Todos";
     connection.query(sql, function (err, result) {
       if (err) throw err;
       callback(result);
