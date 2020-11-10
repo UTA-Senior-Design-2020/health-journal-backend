@@ -22,9 +22,7 @@ router.get("/", function (req, res) {
 router.get("/:doctorID", (req, res) => {
     try {
       const doctorID = req.params.doctorID;
-      
       var value = validateInputID(doctorID);
-      console.log(value);
       if (value == true) {
         DB.retrieveTodo(doctorID, (result) => {
           res.json(result);
@@ -37,6 +35,24 @@ router.get("/:doctorID", (req, res) => {
     }
 });
 
+router.put("/", async (req, res) => {
+    try {
+      await DB.updateTodo(req.body);
+      res.status(200).json({ data: { TodoId: req.body.todoId } });
+    } catch (error) {
+      res.status(500).send({ error: error });
+    }
+});
+
+router.delete("/", async (req, res) => {
+    const { TodoId } = req.body;
+    try {
+      const affectedRows = await DB.deleteTask(TodoId);
+      res.status(200).json({ affectedRows: affectedRows });
+    } catch (error) {
+      res.status(500).send({ error: error });
+    }
+});
 
 
 router.post("/", async (req, res) => {

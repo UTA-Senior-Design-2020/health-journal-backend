@@ -208,7 +208,6 @@ const DB = {
 
   addTodo: function (todoObj) {
     const sql = `INSERT INTO Todos SET ?`;
-    console.log(todoObj);
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, todoObj, (err, result) => {
         if (err) reject(err);
@@ -216,6 +215,22 @@ const DB = {
         const todoId = result.insertId;
         resolve(todoId);
       });
+    });
+  },
+
+  updateTodo: function (todoObj) {
+    const sql = `UPDATE Todos SET Completed = ${todoObj.completed}, isDeleted = ${todoObj.isDeleted} WHERE TodoId = ${todoObj.todoId}`;
+    
+    return new Promise((resolve, reject) => {
+      try {
+        DBConnection.query(sql, (err, result) => {
+          if (err) reject(err);
+
+          resolve(result.affectedRows);
+        });
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 
