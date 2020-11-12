@@ -5,16 +5,26 @@ require("dotenv").config();
 var mysql = require("mysql");
 const DBConnection = require("./DBConnection");
 
-var connection = mysql.createConnection({
-  host: process.env.DB_HOST,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB,
-});
-
 const DB = {
   /** ----- Tasks ----- */
   // UPDATE `dev`.`Tasks` SET `Title` = 'Jump' WHERE (`TaskId` = '5');
+
+  retrieveTask: async function (taskID) {
+    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
+
+    return new Promise((resolve, reject) => {
+      try {
+        // TODO: Validate
+        DBConnection.query(sql, (err, result) => {
+          if (err) reject(err);
+          console.log("DB.retrieveTask.result->", result);
+          resolve(result);
+        });
+      } catch (err) {
+        reject(err);
+      }
+    });
+  },
 
   updateTask: async function (taskObj) {
     const sql = `UPDATE Tasks SET ? WHERE TaskId = ${taskObj.TaskId}`;
@@ -34,21 +44,6 @@ const DB = {
     });
   },
 
-  retrieveTask: function (taskID, callback) {
-    // need to error handle now
-    const sql = `SELECT * FROM Tasks WHERE taskID = ${taskID}`;
-
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        console.log(`DB.retrieveTask(${sql}):`, result);
-        callback(result);
-      } else {
-        callback("TaskID does not exist in DB");
-      }
-    });
-  },
-
   addTask: async function (taskObj) {
     const sql = `INSERT INTO Tasks SET ?`;
 
@@ -62,7 +57,7 @@ const DB = {
         if (err) reject(err);
 
         const taskId = result.insertId;
-        resolve(taskId);
+        resolve(formatResponse(taskId));
       });
     });
   },
@@ -74,24 +69,42 @@ const DB = {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
 
-        resolve(result.affectedRows);
+        resolve(formatResponse(result.affectedRows));
+      });
+    });
+  },
+
+  /** ----- Tasks Logs ----- */
+  // TODO
+  completeTask: async function (patientID, taskID, dateCompleted, notes) {
+    const sql = `
+      INSERT INTO TaskLog(TaskId, DateCompleted, Notes)
+      VALUES(${taskID}, '${dateCompleted}', '${notes}')`;
+
+    // TODO - verify that the given patient owns this task
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+
+        resolve(result);
       });
     });
   },
 
   /** ----- Patients ----- */
-  retrievePatient: function (patientID, callback) {
-    // need to error handle now
+  /** retrievePatient returns a patient by the given patientID
+   * @param patientID id of the patient following a [INSERT PATIENT ID REQUIREMENTS]
+   **/
+  retrievePatient: async function (patientID) {
     const sql = `SELECT * FROM Patients WHERE PatientId = ${patientID}`;
 
-    DBConnection.query(sql, (err, result) => {
-      if (err) throw err;
-      if (result.length > 0) {
-        console.log(`DB.retrievePatient(${sql}):`, result);
-        callback(result);
-      } else {
-        callback("PatientID does not exist in DB");
-      }
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+        if (result.length > 0) resolve(result);
+        else reject("PatientID does not exist in DB");
+      });
     });
   },
 
@@ -106,21 +119,60 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, patientObj, (err, result) => {
         if (err) reject(err);
-
-        resolve(result.insertId);
+        resolve(formatResponse(result.insertId));
       });
     });
   },
-  
+
+  retrievePatientTasks: async function (patientID) {
+    const sql = `
+      SELECT * 
+      FROM Tasks 
+      WHERE PatientId=${patientID}`;
+
+    return new Promise((resolve, reject) => {
+      if (!validatePatient(patientID)) reject("Bad PatientId given");
+
+      DBConnection.query(sql, (err, result) => {
+        console.log(sql, result);
+        if (err) reject(err);
+        resolve(formatResponse(result));
+      });
+    });
+  },
+
+  /** retrievePatientTasksByDay - Will return all of the given patients Tasks for the day given.
+   *  @param day - year-month-day example: "2020-09-06"
+   *  @returns
+   */
+  retrievePatientTasksByDay: async function (patientID, day) {
+    const sql = `
+      SELECT * 
+      FROM Tasks 
+      WHERE PatientId=${patientID}
+      AND StartDate between '${day} 00:00:00' and '${day} 23:59:59'`;
+
+    return new Promise((resolve, reject) => {
+      if (!validatePatient(patientID)) reject("Bad PatientId given");
+
+      DBConnection.query(sql, (err, result) => {
+        if (err) reject(err);
+        resolve(formatResponse(result));
+      });
+    });
+  },
+
+  // TODO
+  retrievePatientTasksPast7Days: async (patientId, startDay, endDay) => {},
+
   /** ----- Doctors ----- */
-  retrieveDoctor: function (doctorID, callback) {
-    // need to error handle now
+  retrieveDoctor: async function (doctorID) {
     const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
+
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, (err, result) => {
         if (err) reject(err);
-
-        resolve(result);
+        resolve(formatResponse(result));
       });
     });
   },
@@ -133,13 +185,26 @@ const DB = {
       try {
         validateDoctor(doctorObj);
 
-        DBConnection.query(sql, [doctorObj.DoctorId, doctorObj.GivenName, doctorObj.FamilyName, 
-          doctorObj.ProfilePicture, doctorObj.Title, doctorObj.Description, doctorObj.Email, 
-          doctorObj.CallPhone, doctorObj.TextPhone, doctorObj.AddressId], (err, result) => {
-          console.log(result);
-          if (err) reject(err);
-          resolve(result.affectedRows);
-        });
+        DBConnection.query(
+          sql,
+          [
+            doctorObj.DoctorId,
+            doctorObj.GivenName,
+            doctorObj.FamilyName,
+            doctorObj.ProfilePicture,
+            doctorObj.Title,
+            doctorObj.Description,
+            doctorObj.Email,
+            doctorObj.CallPhone,
+            doctorObj.TextPhone,
+            doctorObj.AddressId,
+          ],
+          (err, result) => {
+            console.log(result);
+            if (err) reject(err);
+            resolve(result.affectedRows);
+          }
+        );
       } catch (error) {
         reject(error);
       }
@@ -148,7 +213,7 @@ const DB = {
 
   addDoctor: async function (doctorObj) {
     const sql = `INSERT INTO Doctors SET ?`;
-    
+
     return new Promise((resolve, reject) => {
       try {
         validateDoctor(doctorObj);
@@ -183,8 +248,6 @@ const DB = {
     return new Promise((resolve, reject) => {
       DBConnection.query(sql, addressObj, (err, result) => {
         if (err) reject(err);
-
-        const addressId = result.insertId;
         resolve(addressId);
       });
     });
@@ -220,7 +283,7 @@ const DB = {
 
   updateTodo: function (todoObj) {
     const sql = `UPDATE Todos SET Completed = ${todoObj.completed}, isDeleted = ${todoObj.isDeleted} WHERE TodoId = ${todoObj.todoId}`;
-    
+
     return new Promise((resolve, reject) => {
       try {
         DBConnection.query(sql, (err, result) => {
@@ -235,27 +298,36 @@ const DB = {
   },
 
   /** DEVELOPER MODE ONLY */
-  retrieveAllPatients: function (callback) {
+  retrieveAllPatients: async function () {
     const sql = "SELECT * FROM Patients;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
     });
   },
 
-  retrieveAllDoctors: function (callback) {
+  retrieveAllDoctors: async function () {
     const sql = "SELECT * FROM Doctors;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
     });
   },
 
-  retrieveAllTasks: function (callback) {
+  retrieveAllTasks: async function () {
     const sql = "SELECT * FROM Tasks;";
-    connection.query(sql, function (err, result) {
-      if (err) throw err;
-      callback(result);
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
     });
   },
 
@@ -268,6 +340,11 @@ const DB = {
     });
   },
 };
+
+/** ----- Helpers ----- */
+function formatResponse(response) {
+  return { data: response };
+}
 
 /** ----- Validate ----- */
 

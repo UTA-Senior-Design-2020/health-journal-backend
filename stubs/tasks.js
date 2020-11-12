@@ -1,5 +1,4 @@
-const tasks = [
-  {
+const tasks = [{
     id: "46f53b28-8779-4454-b9e4-18fee5c46e4T",
     patientID: "46f53b28-8779-4454-b9e4-18fee5c46e4b",
     title: "Run 1 mile",

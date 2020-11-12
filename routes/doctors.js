@@ -15,7 +15,7 @@ router.get("/", function (req, res) {
 
 router.post("/", async (req, res) => {
   const doctor = req.body;
-  
+
   try {
     const createdDoctorId = await DB.addDoctor(doctor);
     res.status(201).json({ data: { doctorId: createdDoctorId } });
@@ -47,22 +47,15 @@ router.delete("/", async (req, res) => {
 });
 
 /**  GET doctor by ID */
-router.get("/:doctorID", function (req, res) {
+router.get("/:doctorID", async function (req, res) {
   try {
     const doctorID = req.params.doctorID;
-    var value = validateInputID(doctorID);
-    console.log(value);
-    if (value == true) {
-      DB.retrieveDoctor(doctorID, (result) => {
-        res.header("Content-Type", "application/json");
-        res.send(JSON.stringify(result, null, 4));
-      });
-    } else {
-      res.header("Content-Type", "application/json");
-      res.send(JSON.stringify("DoctorID is invalid", null, 4));
-    }
+    if (!validateInputID(doctorID)) res.status(400).send("DoctorID is invalid");
+
+    const result = await DB.retrieveDoctor(doctorID);
+    res.send(result);
   } catch (err) {
-    res.status(400);
+    res.status(400).send(err);
   }
 });
 

@@ -1,4 +1,4 @@
-var cors = require('cors');
+var cors = require("cors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
@@ -9,18 +9,23 @@ var patientsRouter = require("./routes/patients");
 let tasksRouter = require("./routes/tasks");
 var doctorsRouter = require("./routes/doctors");
 var todosRouter = require("./routes/todos");
-var bodyParser = require('body-parser')
+var bodyParser = require("body-parser");
 
 var app = express();
 
-
 // add this one after var app = express();
-app.use(cors({
-  origin: 'http://localhost:3000'
-}));
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+  })
+);
 
 app.use(express.json());
-app.use(express.urlencoded({ extended: false }));
+app.use(
+  express.urlencoded({
+    extended: false,
+  })
+);
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 if (app.get("env") === "production") {
