@@ -3,7 +3,6 @@ var router = express.Router();
 const multer = require('multer');
 import DB from "../database/DB";
 
-
 const upload = multer({
   dest: "public\images"
   // you might also want to set some limits: https://github.com/expressjs/multer#limits
@@ -31,6 +30,7 @@ router.post("/", async (req, res) => {
   }
 });
 
+// express-fileupload. thatis all. https://i.imgur.com/2PLPfKZ.png
 router.put("/:id", (req, res) => {
   console.log(req.files);
   if (!req.files) {
