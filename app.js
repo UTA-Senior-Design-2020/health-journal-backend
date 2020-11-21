@@ -10,6 +10,7 @@ let tasksRouter = require("./routes/tasks");
 var doctorsRouter = require("./routes/doctors");
 var todosRouter = require("./routes/todos");
 var bodyParser = require("body-parser");
+var fileUpload = require('express-fileupload');
 
 var app = express();
 
@@ -19,7 +20,7 @@ app.use(
     origin: "http://localhost:3000",
   })
 );
-
+app.use(fileUpload());
 app.use(express.json());
 app.use(
   express.urlencoded({
