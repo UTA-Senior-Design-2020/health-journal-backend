@@ -166,6 +166,18 @@ const DB = {
   retrievePatientTasksPast7Days: async (patientId, startDay, endDay) => {},
 
   /** ----- Doctors ----- */
+  getPic: async function (doctorID) {
+    const sql = `SELECT ProfilePicture FROM Doctors WHERE DoctorId = ${doctorID}`;
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, (err, result) => {
+        console.log(result[0].ProfilePicture)
+        if (err) reject(err);
+        resolve(result[0].ProfilePicture);
+      });
+    });
+  },
+
   retrieveDoctor: async function (doctorID) {
     const sql = `SELECT * FROM Doctors WHERE DoctorId = ${doctorID}`;
 
@@ -174,6 +186,26 @@ const DB = {
         if (err) reject(err);
         resolve(formatResponse(result));
       });
+    });
+  },
+
+  updateDoctorPicture: async function (file, doctorID) {
+    const sql = `UPDATE Doctors SET ProfilePicture = ? WHERE DoctorId = ${doctorID}`;
+
+    return new Promise((resolve, reject) => {
+      try {
+        //validateDoctor(doctorID);
+
+        DBConnection.query(
+          sql, file.img, (err, result) => {
+            console.log("result", result);
+            if (err) reject(err);
+            resolve(result.affectedRows);
+          }
+        );
+      } catch (error) {
+        reject(error);
+      }
     });
   },
 
