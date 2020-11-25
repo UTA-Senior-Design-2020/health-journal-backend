@@ -161,9 +161,36 @@ const DB = {
       });
     });
   },
+  //Appointments
+  retrieveAllAppointments: async function () {
+    const sql = "SELECT * FROM Appointments;";
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function (err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
+
+  retrieveAppointmentByDoctor: async function (doctorID) {
+    console.log(doctorID)
+    const sql = `SELECT * FROM Appointments WHERE DoctorId = '${doctorID}'`;
+
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function(err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
+
+  // new function:
+  // select * doctorid and patientid, from appointments, order by date,starttime DESC/ASC, 
 
   // TODO
   retrievePatientTasksPast7Days: async (patientId, startDay, endDay) => {},
+  
 
   /** ----- Doctors ----- */
   retrieveDoctor: async function (doctorID) {

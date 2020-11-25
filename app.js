@@ -9,6 +9,7 @@ var patientsRouter = require("./routes/patients");
 let tasksRouter = require("./routes/tasks");
 var doctorsRouter = require("./routes/doctors");
 var todosRouter = require("./routes/todos");
+var appointmentsRouter = require("./routes/appointments");
 var bodyParser = require("body-parser");
 
 var app = express();
@@ -51,6 +52,7 @@ app.use("/patients", patientsRouter);
 app.use("/tasks", tasksRouter);
 app.use("/doctors", doctorsRouter);
 app.use("/todos", todosRouter);
+app.use("/appointments", appointmentsRouter);
 
 app.listen(8080);
 
