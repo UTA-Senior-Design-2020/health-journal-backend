@@ -1,6 +1,5 @@
 var express = require("express");
 var router = express.Router();
-// import tasks from "../stubs/tasks";
 import DB from "../database/DB";
 
 
@@ -27,7 +26,24 @@ router.get("/:doctorID", async function (req, res) {
         res.status(400).send("DoctorID is invalid");
   
       const result = await DB.retrieveAppointmentByDoctor(doctorID);
-      console.log(result)
+      res.send(result);
+    } catch (err) {
+      res.status(400).send(err);
+    }
+  });
+
+  /**  GET appointmentLast by patientID
+ * @returns
+ */
+router.get("/:patientID/appointmentLast", async function (req, res) {
+    try {
+      const patientID = req.params.patientID;
+      console.log("patientID: "+patientID)
+      if (!validateInputID(patientID))
+        res.status(400).send("PatientID is invalid");
+    
+      const result = await DB.retrieveAppointmentLast(patientID);
+      console.log("result from retrieveAppointmentLast: "+result)
       res.send(result);
     } catch (err) {
       res.status(400).send(err);

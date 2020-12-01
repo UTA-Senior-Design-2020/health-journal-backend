@@ -174,7 +174,7 @@ const DB = {
   },
 
   retrieveAppointmentByDoctor: async function (doctorID) {
-    console.log(doctorID)
+    //console.log(doctorID)
     const sql = `SELECT * FROM Appointments WHERE DoctorId = '${doctorID}'`;
 
     return new Promise((resolve, reject) => {
@@ -185,8 +185,17 @@ const DB = {
     });
   },
 
-  // new function:
-  // select * doctorid and patientid, from appointments, order by date,starttime DESC/ASC, 
+  retrieveAppointmentLast: async function (patientID) {
+    const sql = `SELECT Date, EndTime FROM Appointments WHERE PatientId = '${patientID}'
+    ORDER BY Date DESC, EndTime DESC`;
+    
+    return new Promise((resolve, reject) => {
+      DBConnection.query(sql, function(err, result) {
+        if (err) reject(err);
+        resolve(result);
+      });
+    });
+  },
 
   // TODO
   retrievePatientTasksPast7Days: async (patientId, startDay, endDay) => {},
