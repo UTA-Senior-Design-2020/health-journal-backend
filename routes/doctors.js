@@ -17,7 +17,7 @@ router.get("/pic/:id", async function (req, res) {
   try {
     const buffer = await DB.getPic(doctorID);
     console.log(buffer)
-    res.json(buffer);
+    
     fs.writeFile('publicimages/result.png', buffer, 'binary', function(err) {
       if(err) {
         console.log(err);
@@ -25,6 +25,7 @@ router.get("/pic/:id", async function (req, res) {
           console.log("The file was saved!");
       }
     });
+    res.json(buffer);
   } catch (err) {
     res.status(400).send({ error: "Something went wrong" });
   }
